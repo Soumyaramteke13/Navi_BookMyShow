@@ -1,0 +1,1028 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>BMS Booking Prototype</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --red:#f84464; --red-dark:#dc3545; --green:#1ea83c; --green-dark:#0f7a2a;
+  --ink:#222; --ink2:#666; --ink3:#999; --line:#e5e5e5; --bg:#f2f5f9;
+}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+html,body{height:100%}
+body{font-family:Roboto,system-ui,sans-serif;background:#d9dde3;color:var(--ink);display:flex;align-items:center;justify-content:center;height:100vh;overflow:hidden;padding-bottom:64px}
+#tabs{position:fixed;left:50%;bottom:12px;transform:translateX(-50%);display:flex;gap:4px;background:#fff;border-radius:30px;padding:4px;box-shadow:0 4px 16px rgba(0,0,0,.15);z-index:100}
+#tabs button{padding:10px 22px;border-radius:26px;font-size:14px;font-weight:500;color:#555;white-space:nowrap}
+#tabs button.on{background:var(--red);color:#fff}
+button{font:inherit;border:0;background:none;color:inherit;cursor:pointer}
+#phone{flex:none;transform-origin:center center;position:relative;width:390px;height:844px;background:#fff;border-radius:36px;overflow:hidden;box-shadow:0 30px 80px rgba(0,0,0,.25),0 0 0 10px #111;display:flex;flex-direction:column}
+@media (max-width:500px){body{background:#fff;padding-bottom:58px;align-items:flex-start}#phone{width:100vw;height:calc(100dvh - 58px);border-radius:0;box-shadow:none}#tabs{bottom:6px}}
+.status{height:34px;flex:none;display:flex;align-items:center;justify-content:space-between;padding:0 26px;font-size:14px;font-weight:500;background:#fff;z-index:5}
+.status .ic{display:flex;gap:6px;align-items:center;font-size:12px}
+#app{flex:1;position:relative;overflow:hidden;display:flex;flex-direction:column}
+.homebar{height:18px;flex:none;display:flex;align-items:center;justify-content:center;background:#fff;z-index:5}
+.homebar i{width:120px;height:4px;border-radius:4px;background:#666}
+.screen{flex:1;display:flex;flex-direction:column;min-height:0}
+.screen.enter{animation:in .22s ease}
+@keyframes in{from{opacity:.4;transform:translateX(14px)}to{opacity:1;transform:none}}
+.scroll{flex:1;overflow-y:auto;min-height:0}
+.scroll::-webkit-scrollbar{width:0;height:0}
+.hdr{display:flex;align-items:center;gap:14px;padding:12px 16px;border-bottom:1px solid var(--line);background:#fff;flex:none}
+.hdr h1{font-size:19px;font-weight:500;flex:1}
+.hdr .sub{font-size:13px;color:var(--ink2);margin-top:2px;font-weight:400}
+.ibtn{width:32px;height:32px;display:grid;place-items:center;border-radius:50%}
+.ibtn:active{background:#eee}
+svg{display:block}
+
+/* ---------- showtimes ---------- */
+.dates{display:flex;overflow-x:auto;border-bottom:1px solid var(--line);flex:none}
+.dates::-webkit-scrollbar{display:none}
+.date{flex:none;width:64px;padding:8px 0;text-align:center;color:#333}
+.date small{display:block;font-size:11px;letter-spacing:.5px}
+.date b{display:block;font-size:20px;font-weight:500;margin:3px 0}
+.date.off{color:#bbb}
+.date.on{background:var(--red);color:#fff}
+.langrow{padding:12px 16px;font-size:13px;border-bottom:1px solid var(--line);flex:none}
+.chips{display:flex;gap:8px;padding:10px 12px;overflow-x:auto;box-shadow:0 3px 6px rgba(0,0,0,.06);flex:none;align-items:center}
+.chips::-webkit-scrollbar{display:none}
+.chip{flex:none;border:1px solid var(--red);color:var(--red-dark);border-radius:20px;padding:7px 14px;font-size:13px}
+.chip.sort{border-color:#bbb;color:#333;border-radius:8px;display:flex;gap:6px;align-items:center}
+.chip.on{background:var(--red);color:#fff}
+.vsep{width:1px;height:26px;background:#ddd;flex:none}
+.list{background:var(--bg);padding:12px}
+.cin{background:#fff;padding:14px 14px 16px;border-bottom:1px solid #eee}
+.cin-top{display:flex;gap:10px;align-items:flex-start}
+.logo{width:42px;height:42px;border:1px solid #eee;border-radius:6px;display:grid;place-items:center;font-size:8px;font-weight:700;flex:none}
+.logo.cine{color:#0a4fa3;font-size:8.5px}.logo.inox{color:#003c8f;font-size:11px}.logo.pvr{color:#e9b600;font-size:14px}
+.cin h3{font-size:15px;font-weight:500;line-height:1.3;flex:1}
+.heart{padding:2px}
+.cin .canc{font-size:12px;color:var(--ink2);margin:8px 0 10px}
+.times{display:flex;flex-wrap:wrap;gap:10px}
+.time{position:relative;min-width:120px;border:1px solid var(--green);border-left-width:4px;border-radius:4px;padding:9px 10px;text-align:center;font-size:14px;color:#333}
+.time small{display:block;font-size:9px;color:#555;margin-top:2px;letter-spacing:.3px}
+.time .moon{position:absolute;top:-8px;right:-8px;width:18px;height:18px;border-radius:50%;background:#777;display:grid;place-items:center}
+.time:active{background:#eaf7ee}
+.tip{flex:none;display:flex;align-items:center;gap:8px;padding:12px 14px;border-top:1px solid var(--line);font-size:12px;color:#555;background:#fff}
+.tip span{flex:1}
+.tip .pg{font-size:12px;text-decoration:underline}
+.tip .x{width:24px;height:24px;border-radius:50%;background:#e8e8e8;display:grid;place-items:center}
+.empty{padding:40px 20px;text-align:center;color:var(--ink2);font-size:14px}
+
+/* ---------- seats ---------- */
+.seatbar{display:flex;justify-content:space-between;align-items:center;padding:10px 16px 0;background:#eef2f7;font-size:14px;flex:none}
+.seatbar .tk{color:var(--red-dark);display:flex;gap:6px;align-items:center;font-weight:500}
+.showchip{background:#eef2f7;padding:10px 16px 14px;flex:none}
+.showchip span{display:inline-block;background:var(--green);color:#fff;border-radius:4px;padding:10px 32px;font-size:15px;font-weight:500}
+.map{flex:1;overflow:auto;min-height:0;position:relative;background:#fff}
+.map::-webkit-scrollbar{display:none}
+.map-in{display:inline-block;min-width:100%;padding:12px 12px 0 0}
+.srow{display:flex;align-items:center;height:30px}
+.srow.cat{height:34px;align-items:flex-end;padding-bottom:4px}
+.srow.sp{height:18px}
+.rl{position:sticky;left:0;z-index:2;width:22px;flex:none;align-self:stretch;background:#a8a8a8;color:#fff;font-size:12px;display:grid;place-items:center;margin-right:24px}
+.rl.first{border-radius:12px 12px 0 0}.rl.last{border-radius:0 0 12px 12px}
+.catlbl{font-size:12px;color:#333;white-space:nowrap;border-bottom:1px solid #e3e3e3;flex:1;padding-bottom:4px;min-width:740px}
+.cells{display:flex;gap:6px}
+.st,.gap{width:25px;height:25px;flex:none}
+.st{border:1px solid var(--green);border-radius:3px;font-size:10px;color:#555;display:grid;place-items:center;background:#fff}
+.st.sold{background:#e6e6e6;border-color:#e6e6e6;color:#fff;cursor:default}
+.st.sel{background:var(--green);color:#fff}
+.st.wc svg{width:15px;height:15px}
+.st.wc.sel svg path{fill:#fff}
+.screenwrap{padding:28px 0 10px;text-align:center;min-width:760px}
+.scr{width:560px;height:46px;margin:0 auto;position:relative}
+.scrcap{font-size:13px;margin-top:10px;color:#333;text-align:left;padding-left:255px}
+.legend{display:flex;gap:22px;justify-content:center;font-size:14px;padding:12px 0;flex:none;background:#fff}
+.legend i{display:inline-block;width:20px;height:20px;border-radius:3px;vertical-align:-5px;margin-right:8px}
+.offer{display:flex;align-items:center;gap:14px;padding:10px 16px;background:#eef2f7;flex:none}
+.offer .ol{width:44px;height:36px;background:#fff;display:grid;place-items:center;border-radius:4px}
+.offer span{flex:1;font-size:13px}
+.offer .cnt{text-align:right;font-weight:500;font-size:14px}
+.dots{display:flex;gap:3px;margin-top:6px}.dots i{width:18px;height:4px;border-radius:3px;background:#ccc}.dots i.on{background:#333}
+.cta-wrap{padding:10px 18px 8px;background:#fff;flex:none}
+.cta{width:100%;background:var(--red);color:#fff;font-size:18px;padding:14px;border-radius:8px;box-shadow:0 2px 6px rgba(248,68,100,.3)}
+.cta:active{filter:brightness(.92)}
+
+/* ---------- overlays ---------- */
+#ov{position:absolute;inset:0;z-index:20;pointer-events:none}
+#ov.show{pointer-events:auto}
+.dim{position:absolute;inset:0;background:rgba(0,0,0,.55);animation:fade .2s}
+@keyframes fade{from{opacity:0}}
+.sheet{position:absolute;left:0;right:0;bottom:0;background:#fff;border-radius:22px 22px 0 0;animation:up .25s ease;padding-bottom:18px}
+@keyframes up{from{transform:translateY(100%)}}
+.grab{width:110px;height:5px;border-radius:4px;background:#ddd;margin:10px auto 0}
+.sheet h2{text-align:center;font-size:20px;font-weight:500;margin:30px 0 10px;letter-spacing:.3px}
+.veh{height:150px;display:grid;place-items:center;font-size:92px}
+.veh span{animation:pop .25s ease}
+@keyframes pop{from{transform:scale(.7);opacity:.3}}
+.nums{display:flex;justify-content:space-between;padding:12px 14px 28px;border-bottom:1px solid var(--line)}
+.nums button{width:34px;height:34px;border-radius:50%;font-size:18px}
+.nums button.on{background:var(--red);color:#fff;transform:scale(1.15)}
+.cats{display:grid;grid-template-columns:repeat(3,1fr);gap:16px 6px;padding:18px 18px 16px 50px}
+.cats div{font-size:13px}.cats b{display:block;font-size:18px;font-weight:500;margin:5px 0 3px}.cats em{font-style:normal;color:var(--green);font-size:13px;font-weight:500}
+.cats .r{grid-column:2}
+.dialog{position:absolute;left:18px;right:18px;top:50%;transform:translateY(-50%);background:#fff;animation:fade .15s}
+.dlg-bms h4{background:#f2f2f2;text-align:center;font-weight:400;font-size:18px;padding:18px}
+.dlg-bms p{text-align:center;padding:24px 30px 36px;font-size:16px;color:#333;line-height:1.4}
+.dlg-bms .row{display:flex;border-top:1px solid #ddd}
+.dlg-bms .row button{flex:1;padding:18px;font-size:16px}
+.dlg-bms .row button+button{border-left:1px solid #ddd}
+.dlg-pay{left:42px;right:42px;border-radius:12px;padding:26px 22px 22px;text-align:center}
+.dlg-pay h4{font-size:19px;font-weight:500;margin-bottom:14px}
+.dlg-pay p{font-size:15px;color:#444;line-height:1.5}
+.dlg-pay .yes{color:var(--red-dark);font-size:17px;font-weight:500;margin:14px 0 12px;display:block;width:100%}
+.dlg-pay .no{background:var(--red-dark);color:#fff;width:100%;padding:11px;border-radius:6px;font-size:16px;font-weight:500}
+.actsheet{padding:16px 0 8px}
+.actsheet h5{font-size:16px;font-weight:500;padding:6px 20px 12px}
+.actsheet button{display:flex;justify-content:space-between;width:100%;padding:14px 20px;font-size:15px;text-align:left}
+.actsheet button.on{color:var(--red-dark);font-weight:500}
+.toast{position:absolute;left:50%;bottom:90px;transform:translateX(-50%);background:#333;color:#fff;padding:10px 16px;border-radius:20px;font-size:13px;z-index:40;white-space:nowrap;animation:fade .2s}
+
+/* ---------- confirm ---------- */
+.conf{background:var(--bg);padding:0 16px 20px}
+.card{background:#fff;border-radius:10px;padding:14px;margin-top:12px;box-shadow:0 1px 3px rgba(0,0,0,.08)}
+.bk1{display:flex;justify-content:space-between}
+.bk1 h2{font-size:21px;font-weight:500}
+.bk1 .n{font-size:21px;font-weight:500}
+.bk2{display:flex;justify-content:space-between;align-items:center;font-size:17px;margin-top:4px}
+.mt{color:var(--red-dark);display:flex;gap:6px;align-items:center}
+.muted{color:var(--ink2);font-size:15px;margin-top:3px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.prow{display:flex;justify-content:space-between;font-size:15px;color:#444;padding:8px 0}
+.prow.tot{color:#111;font-weight:500;border-top:1px solid #ccc;margin-top:6px;padding-top:14px}
+.feebrk{background:#fafafa;border-radius:6px;padding:4px 10px;margin-bottom:4px}
+.feebrk .prow{font-size:13px;padding:5px 0}
+.chev{display:inline-block;transition:transform .2s}.chev.up{transform:rotate(180deg)}
+.donate{padding:0;overflow:hidden}
+.donate .top{background:linear-gradient(90deg,#dbe9fb,#f7e3ec);padding:16px 14px;display:flex;justify-content:space-between;align-items:center}
+.donate .top h3{font-size:26px;color:#1f6fbf;font-weight:700}
+.donate .top h3 span{font-size:21px;color:#333;font-weight:400;margin-left:6px}
+.donate .top a{display:block;font-size:13px;color:#1f6fbf;margin-top:2px}
+.donate .tkt{font-size:40px}
+.donate .bot{display:flex;justify-content:space-between;align-items:center;padding:12px 14px;font-size:14px;color:#444}
+.donate .bot small{display:block;font-size:12px;text-decoration:underline;margin-top:8px}
+.addbtn{border:1.5px solid var(--red-dark);color:var(--red-dark);border-radius:8px;padding:9px 14px;font-size:15px;font-weight:500}
+.addbtn.on{background:var(--red-dark);color:#fff}
+.contact h4{font-size:16px;font-weight:500;display:flex;justify-content:space-between}
+.contact h4 button{color:var(--red-dark);font-weight:400;display:flex;gap:6px;align-items:center}
+.contact p{font-size:15px;color:#555;margin-top:10px;line-height:1.5}
+.offers{display:flex;align-items:center;gap:10px;font-size:18px;font-weight:500;width:100%;text-align:left}
+.offers span{flex:1}
+.consent{font-size:15px;color:#333;line-height:1.4}
+.foot{display:flex;align-items:center;justify-content:space-between;padding:14px 18px 10px;background:#fff;border-top:1px solid #eee;flex:none}
+.foot .t small{font-size:14px;color:#555}.foot .t b{display:block;font-size:22px;font-weight:700;margin-top:2px}
+.foot .cta{width:auto;flex:none;padding:13px 40px;font-size:18px}
+.foot .pu{font-size:13px;color:#444;text-align:left}
+.foot .pu b{display:block;font-size:17px;font-weight:500;color:#111;margin-top:3px}
+.gpay{display:inline-block;border:1px solid #888;border-radius:10px;padding:0 5px;font-size:10px;margin-right:4px}
+
+/* ---------- payment ---------- */
+.amt{background:#fbf7da;display:flex;justify-content:space-between;align-items:center;padding:28px 16px 32px;position:relative;font-size:16px}
+.amt b{font-size:28px;font-weight:500}
+.amt:after{content:"";position:absolute;left:0;right:0;bottom:-8px;height:10px;background:radial-gradient(circle at 6px -2px,#fbf7da 7px,transparent 7.5px) repeat-x;background-size:12px 10px}
+.paysec{background:#f2f2f2;padding:24px 0 0}
+.paysec h6{font-size:15px;font-weight:400;color:#555;letter-spacing:.4px;padding:0 16px 14px;border-bottom:1px solid #ddd}
+.popts{background:#fff}
+.popt{display:flex;align-items:center;gap:20px;padding:0 0 0 16px;width:100%;text-align:left}
+.popt .pi{width:34px;display:grid;place-items:center;flex:none}
+.popt span{flex:1;font-size:17px;padding:20px 0;border-bottom:1px solid #e6e6e6}
+.popt:last-child span{border-bottom:0}
+.popt:active{background:#f6f6f6}
+.paybot{background:#f2f2f2;padding:22px 16px 30px;color:#888}
+.brandrow{display:flex;justify-content:space-between;align-items:center}
+.brand{font-size:30px;font-weight:700;color:#aaa;letter-spacing:-1px}
+.brand span{background:#aaa;color:#f2f2f2;padding:0 4px;border-radius:3px;transform:rotate(-6deg);display:inline-block}
+.seal{width:120px;height:120px;border-radius:50%;border:2px solid #ccc;display:grid;place-items:center;font-size:9px;text-align:center;color:#aaa;letter-spacing:1px}
+.seal i{width:44px;height:44px;border-radius:50%;background:#ddd;display:grid;place-items:center;margin:4px auto}
+.paybot h6{font-size:15px;font-weight:400;margin:18px 0 8px}
+.paybot ol{padding-left:20px;font-size:14px;line-height:1.5}
+.paybot ol li{margin-bottom:10px}
+.badges{display:flex;gap:10px;flex-wrap:wrap;margin-top:10px}
+.badges span{font-size:10px;font-weight:700;color:#777;background:#fff;border-radius:4px;padding:6px 7px}
+
+/* ---------- upi ---------- */
+.upilist{background:var(--bg);flex:1;padding:12px 16px}
+.upilist .card{padding:0 14px;margin:0}
+.upi{display:flex;align-items:center;gap:20px;width:100%;padding:12px 0;text-align:left;border-bottom:1px solid #eee;font-size:17px}
+.upi:last-child{border:0}
+.upi .ul{width:56px;height:46px;border:1px solid #ddd;border-radius:8px;display:grid;place-items:center;font-size:12px;font-weight:700;flex:none}
+.upi span{flex:1}
+
+/* ---------- processing ---------- */
+.proc{flex:1;background:var(--bg);padding:16px 16px;display:flex;flex-direction:column}
+.warn{background:#fff3cd;border-radius:8px;padding:10px 14px;text-align:center;font-size:14px;line-height:1.45;color:#333}
+.pwrap{flex:1;display:flex;flex-direction:column;justify-content:center;padding:0 24px 80px}
+.bar{height:6px;background:#dcdfe5;border-radius:6px;overflow:hidden}
+.bar i{display:block;height:100%;width:0;background:var(--green);border-radius:6px;transition:width .1s linear}
+.pct{text-align:right;font-size:13px;color:#777;margin-top:8px}
+.proc h3{text-align:center;font-size:20px;font-weight:500;margin-top:36px}
+.proc p{text-align:center;font-size:15px;color:#555;margin-top:10px;line-height:1.5}
+
+/* ---------- ticket ---------- */
+.tkscreen{flex:1;background:#3b3b3b;overflow-y:auto;padding:0 20px 30px;position:relative}
+.tkscreen::-webkit-scrollbar{display:none}
+.tkhead{display:flex;align-items:center;justify-content:center;gap:8px;color:#222;font-size:24px;height:90px;position:relative;color:#1b1b1b}
+.tkhead .closex{position:absolute;right:-4px;top:16px;width:58px;height:58px;border-radius:50%;border:2px solid #b02a37;display:grid;place-items:center}
+.ticket{background:#fff;border-radius:22px;position:relative;overflow:hidden}
+.tk-top{display:flex;gap:18px;padding:22px 34px 18px 22px;position:relative}
+.poster{width:96px;height:146px;border-radius:12px;flex:none;position:relative;overflow:hidden;background:linear-gradient(160deg,#1d3b2a,#4c7a3d 45%,#c9a24a);box-shadow:0 4px 10px rgba(0,0,0,.25);color:#fff;display:flex;flex-direction:column;justify-content:space-between}
+.poster .pt{font-size:13px;font-weight:700;letter-spacing:2px;padding:12px 8px;text-align:center;text-shadow:0 1px 3px rgba(0,0,0,.5)}
+.poster .wt{background:var(--red-dark);font-size:11px;text-align:center;padding:5px 0}
+.poster .play{width:30px;height:30px;border-radius:50%;border:2px solid #fff;display:grid;place-items:center;margin:0 auto;background:rgba(0,0,0,.25)}
+.tk-top h2{font-size:21px;font-weight:700;line-height:1.25}
+.tk-top p{color:#666;font-size:15px;margin-top:10px}
+.mtk{position:absolute;right:6px;top:70px;transform:rotate(-90deg);font-size:14px;color:#555;transform-origin:center}
+.notch{position:absolute;width:20px;height:20px;border-radius:50%;background:#3b3b3b}
+.tap{margin:0 22px;background:#f3f3f3;border-radius:14px;padding:13px;text-align:center;font-size:15px;width:calc(100% - 44px);display:block}
+.tkd{text-align:center;padding:26px 0 0}
+.tkd .n{color:#555;font-size:15px}
+.tkd .scr{font-size:24px;margin:12px 0 4px;width:auto;height:auto}
+.tkd .seats{color:#555;font-size:15px;padding:0 20px}
+.qr{width:120px;height:120px;margin:18px auto 16px}
+.tkd .bid{font-size:17px;font-weight:500;letter-spacing:.3px;padding-bottom:18px}
+.cinfo{background:#f3f3f3;color:#555;font-size:14px;text-align:center;padding:12px 30px;line-height:1.5}
+.support{display:flex;flex-direction:column;align-items:center;gap:6px;padding:20px 0 24px;color:#555;font-size:15px;margin:0 auto}
+.dash{border-top:1px solid #aaa;margin:0 22px;position:relative}
+.tktot{background:#f3f3f3;padding:14px 18px 18px}
+.tktot .prow{color:#666;font-size:15px}
+.tktot .prow:first-child{color:#222;font-size:15px}
+
+/* ---------- split pay (payment page) ---------- */
+.splitcard{background:#fff;margin:12px 0 0;border-radius:10px;box-shadow:0 1px 3px rgba(0,0,0,.08);overflow:hidden}
+.splitcard h5{font-size:15px;font-weight:500;padding:14px 14px 6px}
+.radio{display:flex;align-items:center;gap:12px;width:100%;text-align:left;padding:12px 14px;border-top:1px solid #f0f0f0}
+.radio:first-of-type{border-top:0}
+.radio i{width:20px;height:20px;border-radius:50%;border:2px solid #bbb;flex:none;position:relative}
+.radio.on i{border-color:var(--red-dark)}
+.radio.on i:after{content:"";position:absolute;inset:3px;border-radius:50%;background:var(--red-dark)}
+.radio div{flex:1}.radio b{font-weight:500;font-size:15px;display:block}.radio small{font-size:12.5px;color:#777;display:block;margin-top:2px;line-height:1.35}
+.radio > span{font-size:14px;font-weight:500}
+.newtag{background:#e8f6ea;color:var(--green);font-size:10px!important;font-weight:700;padding:3px 6px;border-radius:4px;letter-spacing:.5px}
+.splitbody{padding:4px 14px 14px;animation:fade .2s}
+.steprow{display:flex;align-items:center;gap:10px;background:#fafafa;border-radius:8px;padding:10px 12px}
+.steprow div:first-child{flex:1}.steprow b{font-size:14px;font-weight:500;display:block}.steprow small{font-size:12px;color:#777}
+.stepper{display:flex;align-items:center;border:1.5px solid var(--red-dark);border-radius:8px;overflow:hidden}
+.stepper button{width:34px;height:32px;font-size:20px;color:var(--red-dark)}
+.stepper button:disabled{color:#ccc}
+.stepper{flex:none}
+.steprow div:first-child{min-width:0}
+.stepper span{display:inline-flex;align-items:baseline;justify-content:center;min-width:36px;white-space:nowrap;text-align:center;font-weight:400;font-size:15px;color:#555}
+.stepper span b{font-weight:700;color:#111}
+.seatchips{display:flex;flex-wrap:wrap;gap:8px;margin:12px 0}
+.sc{border:1px solid #ddd;border-radius:6px;padding:9px 0;width:calc((100% - 40px)/6);text-align:center;font-size:13px;font-weight:500;color:#555;transition:all .15s}
+.sc small{display:block;font-size:9.5px;font-weight:400;color:#999;margin-top:2px}
+.sc.me{background:var(--green);border-color:var(--green);color:#fff}.sc.me small{color:#e3f5e7}
+.holdnote{display:flex;gap:8px;background:#fff7e0;border-radius:8px;padding:10px 12px;font-size:12.5px;color:#5a4a1a;line-height:1.45}
+.amt small{display:block;font-size:12px;color:#777;margin-top:3px}
+
+/* ---------- group booking status ---------- */
+.grp{background:var(--bg);padding:0 14px 20px}
+.okbanner{display:flex;gap:12px;align-items:center;background:#e8f6ea;border-radius:10px;padding:14px;margin-top:12px}
+.okbanner .ck{width:34px;height:34px;border-radius:50%;background:var(--green);color:#fff;display:grid;place-items:center;font-size:18px;flex:none}
+.okbanner b{font-weight:500;font-size:15px;display:block}.okbanner small{font-size:13px;color:#4a6b52}
+.hold{display:flex;align-items:center;justify-content:space-between;background:#fff7e0;border-radius:10px;padding:12px 14px;margin-top:10px;font-size:13px;color:#5a4a1a}
+.hold b{font-size:18px;font-weight:700;color:#b26a00;font-variant-numeric:tabular-nums}
+.mini h3{font-size:17px;font-weight:500}.mini p{font-size:13.5px;color:#666;margin-top:3px}
+.linkcard h4{font-size:15px;font-weight:500}.linkcard p{font-size:13px;color:#777;margin-top:4px;line-height:1.4}
+.linkbox{display:flex;align-items:center;gap:8px;border:1px dashed #c9c9c9;border-radius:8px;padding:10px 12px;margin-top:12px;font-size:14px;color:#333}
+.linkbox span{flex:1;font-weight:500}
+.linkbox button{color:var(--red-dark);font-weight:500;font-size:14px}
+.sharebtn{width:100%;margin-top:12px;background:var(--red-dark);color:#fff;border-radius:8px;padding:12px;font-size:16px;font-weight:500;display:flex;gap:8px;justify-content:center;align-items:center}
+.prog{display:flex;justify-content:space-between;font-size:14px;margin-bottom:8px}
+.prog b{font-weight:500}
+.pbar{height:6px;background:#eee;border-radius:6px;overflow:hidden;display:flex}
+.pbar i{height:100%;background:var(--green);transition:width .4s}
+.srowx{display:flex;align-items:center;gap:12px;padding:12px 0;border-top:1px solid #f0f0f0}
+.srowx:first-of-type{border-top:0}
+.sbadge{width:44px;height:38px;border-radius:6px;border:1px solid var(--green);color:#333;display:grid;place-items:center;font-size:13px;font-weight:500;flex:none}
+.sbadge.done{background:var(--green);color:#fff}
+.sbadge.canc{border-color:#ddd;background:#f3f3f3;color:#aaa;text-decoration:line-through}
+.who{flex:1;min-width:0}.who b{font-weight:500;font-size:14.5px;display:block}.who small{font-size:12px;color:#888}
+.pill{font-size:11.5px;font-weight:500;padding:4px 9px;border-radius:12px;flex:none}
+.pill.done{background:#e8f6ea;color:#16843a}.pill.wait{background:#fff3d6;color:#a86a00}.pill.canc{background:#fde8ea;color:#c0392b}
+.remind{font-size:12.5px;color:var(--red-dark);font-weight:500;margin-left:4px}
+.flash{animation:flash 1.2s ease}
+@keyframes flash{0%{background:#fff7d6}100%{background:transparent}}
+
+/* ---------- friend: chat ---------- */
+.wahdr{display:flex;align-items:center;gap:10px;background:#075e54;color:#fff;padding:10px 12px;flex:none}
+.wahdr .av{width:38px;height:38px;border-radius:50%;background:#f0b37e;color:#5a3210;display:grid;place-items:center;font-weight:700}
+.wahdr b{display:block;font-size:16px;font-weight:500}.wahdr small{font-size:12px;opacity:.85}
+.wahdr .ic{font-size:18px;opacity:.9;padding:0 6px}
+.wabody{flex:1;overflow-y:auto;background:#efeae2;padding:12px 10px;display:flex;flex-direction:column;gap:6px}
+.daychip{align-self:center;background:#fff;color:#555;font-size:12px;border-radius:8px;padding:4px 10px;margin-bottom:6px;box-shadow:0 1px 1px rgba(0,0,0,.08)}
+.msg{max-width:82%;background:#fff;border-radius:0 10px 10px 10px;padding:7px 9px 18px;font-size:14.5px;line-height:1.4;position:relative;box-shadow:0 1px 1px rgba(0,0,0,.1);align-self:flex-start}
+.msg{min-width:96px}
+.msg.out{min-width:128px;align-self:flex-end;background:#d9fdd3;border-radius:10px 0 10px 10px}
+.msg .tm{position:absolute;right:8px;bottom:3px;font-size:10.5px;color:#888}
+.msg .who{font-size:13px;font-weight:500;color:#c0632b;display:block;margin-bottom:2px}
+.lp{display:block;width:100%;text-align:left;background:#f3f3f3;border-radius:8px;overflow:hidden;margin-bottom:6px}
+.lpimg{height:110px;background:linear-gradient(160deg,#1d3b2a,#4c7a3d 45%,#c9a24a);color:#fff;font-weight:700;letter-spacing:3px;display:grid;place-items:center;font-size:18px}
+.lpt{padding:8px 10px}.lpt b{display:block;font-size:14px;font-weight:500}.lpt small{display:block;font-size:12px;color:#666;margin-top:2px}
+.msg a{color:#027eb5;text-decoration:underline;cursor:pointer;word-break:break-all}
+.wainput{display:flex;gap:8px;padding:8px;background:#efeae2;flex:none}
+.wainput .box{flex:1;background:#fff;border-radius:24px;padding:12px 16px;color:#888;font-size:15px}
+.wainput .mic{width:46px;height:46px;border-radius:50%;background:#00a884;display:grid;place-items:center;font-size:18px}
+
+/* ---------- friend: invite ---------- */
+.inv{background:var(--bg);padding:0 14px 20px}
+.host{display:flex;gap:12px;align-items:center;margin-top:14px}
+.host .av{width:44px;height:44px;border-radius:50%;background:#f0b37e;color:#5a3210;display:grid;place-items:center;font-weight:700;font-size:18px;flex:none}
+.host b{font-size:16px;font-weight:500;display:block}.host small{font-size:13px;color:#666}
+.mv{display:flex;gap:14px}
+.mv .pst{width:64px;height:92px;border-radius:8px;background:linear-gradient(160deg,#1d3b2a,#4c7a3d 45%,#c9a24a);color:#fff;font-size:9px;font-weight:700;letter-spacing:1px;display:grid;place-items:center;text-align:center;flex:none}
+.mv h3{font-size:18px;font-weight:500}.mv p{font-size:13.5px;color:#666;margin-top:4px}
+.seatgrid{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}
+.seatgrid .sc{width:calc((100% - 40px)/6)}
+.sc.paid{background:#e6e6e6;border-color:#e6e6e6;color:#aaa}
+.sc.open{border-color:var(--green);color:#333}
+.lg{display:flex;gap:16px;font-size:12.5px;color:#666;margin-top:12px}
+.lg i{display:inline-block;width:14px;height:14px;border-radius:3px;vertical-align:-3px;margin-right:6px}
+.perseat{display:flex;justify-content:space-between;align-items:center;font-size:14px;color:#444}
+.perseat b{font-size:18px;font-weight:500;color:#111}
+.foot2{display:flex;gap:12px;padding:12px 16px 10px;background:#fff;border-top:1px solid #eee;flex:none}
+.ghost{flex:1;border:1.5px solid var(--red-dark);color:var(--red-dark);border-radius:8px;padding:13px;font-size:16px;font-weight:500}
+.foot2 .cta{flex:1;width:auto;padding:13px;font-size:16px;font-weight:500;box-shadow:none}
+.invtop{background:#eef2f7;padding:2px 14px 12px;flex:none}
+.invtop .host{margin-top:10px}
+.invtop .hold{margin-top:10px;padding:9px 14px}
+.st.faded{border-color:#a9d8b4;color:#a8a8a8}
+.st.faded.sold{background:#efefef;border-color:#efefef}
+.st.gpaid{background:#cfcfcf;border-color:#cfcfcf;color:#fff}
+.st.gopen{background:#e8f6ea;border:2px solid var(--green);color:#16843a;font-weight:700}
+.optout{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:30px;background:#fff}
+.optout .ic{width:70px;height:70px;border-radius:50%;background:#f3f3f3;display:grid;place-items:center;font-size:30px;color:#999}
+.optout h2{font-size:21px;font-weight:500;margin-top:20px}
+.optout p{font-size:14.5px;color:#666;margin-top:10px;line-height:1.5}
+.optout .cta{margin-top:28px}
+.optout .lnk{color:var(--red-dark);font-size:14px;font-weight:500;margin-top:16px}
+
+/* ---------- android share sheet ---------- */
+.share{background:#f4f6fb;padding-bottom:22px}
+.shtitle{font-size:14px;color:#555;text-align:center;margin:14px 0 10px}
+.shprev{display:flex;gap:12px;align-items:center;background:#fff;margin:0 16px;border-radius:16px;padding:12px}
+.shprev .th{width:52px;height:52px;border-radius:10px;background:linear-gradient(160deg,#1d3b2a,#4c7a3d 45%,#c9a24a);flex:none;color:#fff;font-size:9px;font-weight:700;display:grid;place-items:center;letter-spacing:1px}
+.shprev b{font-size:14px;font-weight:500;display:block}.shprev small{font-size:12px;color:#666;display:block;margin-top:2px;line-height:1.35}
+.shacts{display:flex;gap:10px;margin:12px 16px 4px}
+.shacts button{flex:1;background:#fff;border-radius:20px;padding:9px;font-size:13.5px;display:flex;gap:6px;justify-content:center;align-items:center}
+.shapps{display:grid;grid-template-columns:repeat(4,1fr);gap:16px 0;padding:16px 8px 0;background:#fff;margin:12px 0 0;border-radius:20px 20px 0 0}
+.shapps button{display:flex;flex-direction:column;align-items:center;gap:6px;font-size:12px;color:#333}
+.shapps i{width:50px;height:50px;border-radius:50%;display:grid;place-items:center;color:#fff;font-style:normal;font-weight:700;font-size:18px}
+.shapps .lbl2{font-size:10.5px;color:#888;margin-top:-4px}
+</style>
+</head>
+<body>
+<div id="phone">
+  <div class="status"><span id="clock">11:51</span><span class="ic">
+    <svg width="16" height="12" viewBox="0 0 16 12"><path d="M8 11.5 1 4a10 10 0 0 1 14 0z" fill="#222"/></svg>
+    <svg width="16" height="12" viewBox="0 0 16 12"><rect x="0" y="8" width="3" height="4" fill="#222"/><rect x="4.3" y="5.5" width="3" height="6.5" fill="#222"/><rect x="8.6" y="3" width="3" height="9" fill="#222"/><rect x="13" y="0" width="3" height="12" fill="#222"/></svg>
+    55%</span></div>
+  <div id="app"></div>
+  <div class="homebar"><i></i></div>
+  <div id="ov"></div>
+</div>
+<nav id="tabs"><button class="on" data-a="mode" data-v="org">Organizer (Rohan)</button><button data-a="mode" data-v="friend">Friend (invitee)</button></nav>
+
+<script>
+/* ================= icons ================= */
+const I = {
+  back:'<svg width="22" height="22" viewBox="0 0 24 24"><path d="M15 4 7 12l8 8" fill="none" stroke="#222" stroke-width="2"/></svg>',
+  search:'<svg width="24" height="24" viewBox="0 0 24 24"><circle cx="10.5" cy="10.5" r="7" fill="none" stroke="#222" stroke-width="2"/><path d="m16 16 6 6" stroke="#222" stroke-width="2"/></svg>',
+  filter:'<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#222" stroke-width="1.8"><path d="M3 6h18M3 12h18M3 18h18"/><circle cx="8" cy="6" r="2.2" fill="#fff"/><circle cx="15" cy="12" r="2.2" fill="#fff"/><circle cx="9" cy="18" r="2.2" fill="#fff"/></svg>',
+  heart:(on)=>`<svg width="24" height="24" viewBox="0 0 24 24"><path d="M12 20.5s-8-5-8-11a4.5 4.5 0 0 1 8-2.8A4.5 4.5 0 0 1 20 9.5c0 6-8 11-8 11z" fill="${on?'#f84464':'none'}" stroke="${on?'#f84464':'#aaa'}" stroke-width="1.6"/></svg>`,
+  info:'<svg width="16" height="16" viewBox="0 0 24 24" style="display:inline;vertical-align:-2px"><circle cx="12" cy="12" r="10" fill="none" stroke="#555" stroke-width="1.8"/><path d="M12 11v6M12 7.5v.5" stroke="#555" stroke-width="2"/></svg>',
+  moon:'<svg width="11" height="11" viewBox="0 0 24 24"><path d="M20 15A8 8 0 1 1 9 4a6.5 6.5 0 0 0 11 11z" fill="#fff"/></svg>',
+  sort:'<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#f84464" stroke-width="2"><path d="M7 20V4M3 8l4-4 4 4M17 4v16M13 16l4 4 4-4"/></svg>',
+  down:'<svg width="14" height="14" viewBox="0 0 24 24"><path d="m5 9 7 7 7-7" fill="none" stroke="currentColor" stroke-width="2"/></svg>',
+  pencil:(c='#dc3545')=>`<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="${c}" stroke-width="1.6"><path d="M4 20h4L19 9l-4-4L4 16z"/><path d="m13.5 6.5 4 4"/></svg>`,
+  right:'<svg width="20" height="20" viewBox="0 0 24 24"><path d="m9 5 7 7-7 7" fill="none" stroke="#333" stroke-width="2"/></svg>',
+  wc:'<svg viewBox="0 0 24 24"><path d="M10 2.5a2 2 0 1 1 0 4 2 2 0 0 1 0-4zM9 8h2v5h5l3 6-1.8.9L14.8 15H9.5A1.5 1.5 0 0 1 8 13.5zM6.5 11.3l.6 1.9A4.5 4.5 0 1 0 13 18.6l1.4 1.4A6.5 6.5 0 1 1 6.5 11.3z" fill="#1ea83c"/></svg>',
+  share:'<svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#1b1b1b" stroke-width="1.5"><circle cx="18" cy="5" r="2.5"/><circle cx="6" cy="12" r="2.5"/><circle cx="18" cy="19" r="2.5"/><path d="m8.3 10.8 7.4-4.4M8.3 13.2l7.4 4.4"/></svg>',
+  x:'<svg width="26" height="26" viewBox="0 0 24 24"><path d="M5 5l14 14M19 5 5 19" stroke="#b02a37" stroke-width="1.8"/></svg>',
+  xs:'<svg width="12" height="12" viewBox="0 0 24 24"><path d="M5 5l14 14M19 5 5 19" stroke="#333" stroke-width="2.5"/></svg>',
+  phone:'<svg width="30" height="30" viewBox="0 0 24 24"><path d="M6.6 3.5 9 3l1.6 4-2 1.5a11 11 0 0 0 6.9 6.9l1.5-2 4 1.6-.5 2.4a2 2 0 0 1-2 1.6A15.5 15.5 0 0 1 5 5.5a2 2 0 0 1 1.6-2z" fill="none" stroke="#555" stroke-width="1.3"/></svg>',
+  offerTick:'<svg width="30" height="26" viewBox="0 0 30 26"><path d="M3 13l8 9L28 2" fill="none" stroke="#d6202f" stroke-width="5" stroke-linecap="round"/></svg>',
+  badge:'<svg width="22" height="22" viewBox="0 0 24 24"><path d="m12 1 2.6 2.2 3.4-.4.9 3.3 3 1.7-1.3 3.2 1.3 3.2-3 1.7-.9 3.3-3.4-.4L12 23l-2.6-2.2-3.4.4-.9-3.3-3-1.7L3.4 13 2.1 9.8l3-1.7.9-3.3 3.4.4z" fill="#f5b400"/><path d="m9 15 6-6" stroke="#fff" stroke-width="1.6"/><circle cx="9.5" cy="9.5" r="1.2" fill="#fff"/><circle cx="14.5" cy="14.5" r="1.2" fill="#fff"/></svg>',
+  card:'<svg width="30" height="24" viewBox="0 0 30 24"><rect x="2" y="3" width="26" height="18" rx="3" fill="none" stroke="#222" stroke-width="2"/><path d="M2 9h26" stroke="#222" stroke-width="3"/><path d="M6 16h7" stroke="#222" stroke-width="2"/></svg>',
+  wallet:'<svg width="30" height="34" viewBox="0 0 30 34"><rect x="7" y="2" width="15" height="28" rx="2" fill="none" stroke="#3fb24f" stroke-width="1.6"/><rect x="2" y="12" width="17" height="11" rx="2" fill="#e8f6ea" stroke="#3fb24f" stroke-width="1.6"/><circle cx="14.5" cy="27" r="1" fill="#3fb24f"/></svg>',
+  gift:'<svg width="28" height="32" viewBox="0 0 28 32" fill="none" stroke="#ef4f74" stroke-width="1.6"><rect x="3" y="11" width="22" height="6"/><rect x="5" y="17" width="18" height="13"/><path d="M14 11v19M14 11c-3-6-9-6-8-2s8 2 8 2zm0 0c3-6 9-6 8-2s-8 2-8 2z"/></svg>',
+  monitor:'<svg width="30" height="28" viewBox="0 0 30 28" fill="none" stroke="#222" stroke-width="1.8"><rect x="2" y="2" width="26" height="18" rx="1.5"/><path d="M2 16h26M15 20v5M9 26h12"/></svg>',
+  later:'<svg width="32" height="32" viewBox="0 0 32 32" fill="none" stroke="#333" stroke-width="1.4"><path d="M16 3a13 13 0 1 1-12.6 9.8" stroke-dasharray="2 2.5"/><path d="M16 3a13 13 0 0 0-12.6 9.8"/><text x="11" y="21" font-size="13" fill="#333" stroke="none" font-family="Roboto">₹</text><path d="M16 1v4l3-2z" fill="#333"/></svg>',
+  points:'<svg width="32" height="32" viewBox="0 0 32 32"><rect x="2" y="2" width="28" height="28" fill="none" stroke="#e8662b" stroke-width="2"/><text x="6" y="21" font-size="11" fill="#e8662b" font-family="Roboto" font-weight="500">123</text></svg>',
+  upi:'<svg width="38" height="16" viewBox="0 0 38 16"><text x="0" y="12" font-size="13" font-style="italic" font-weight="700" fill="#555" font-family="Arial">UPI</text><path d="m28 2 4 6-6 6z" fill="#f47920"/><path d="m32 2 4 6-6 6z" fill="#109147"/></svg>',
+  chat:'<svg width="30" height="30" viewBox="0 0 24 24"><rect width="24" height="24" rx="5" fill="#2cbf45"/><path d="M12 5a7 7 0 0 0-6 10.5L5 19l3.6-1A7 7 0 1 0 12 5z" fill="none" stroke="#fff" stroke-width="1.5"/></svg>',
+};
+
+/* ================= data ================= */
+const MOVIE = {title:'Wildwood', lang:'English', fmt:'2D'};
+const DAYS = (()=>{const out=[];const d0=new Date(2026,10,20);for(let i=0;i<7;i++){const d=new Date(d0);d.setDate(d0.getDate()+i);out.push({d,dow:d.toLocaleDateString('en-US',{weekday:'short'}).toUpperCase(),n:d.getDate(),mon:'NOV',open:i<3});}return out;})();
+const CINEMAS = [
+  {id:1,name:'Cinepolis: Nexus Seawoods, Nerul, Navi Mumbai',logo:'cine',cancel:true,min:300,max:850,times:[{t:'11:30 PM',night:true}]},
+  {id:2,name:'Cinepolis: Lake Shore, Thane (EX Viviana Mall)',logo:'cine',cancel:false,min:260,max:420,times:[{t:'11:40 PM',tag:'2K LASER DOLBY 7.1',night:true}]},
+  {id:3,name:'INOX: Megaplex, Inorbit Mall, Malad',logo:'inox',cancel:true,min:180,max:350,times:[{t:'12:15 PM',tag:'KIDDLES'}]},
+  {id:4,name:'HDFC Millennia PVR ICON: Oberoi Mall, Goregaon (E)',logo:'pvr',cancel:true,min:350,max:900,times:[{t:'10:45 AM'},{t:'02:10 PM'},{t:'09:55 PM',night:true}]},
+  {id:5,name:'PVR: Orion Mall, Panvel',logo:'pvr',cancel:false,min:150,max:280,times:[{t:'01:20 PM'},{t:'06:35 PM'}]},
+  {id:6,name:'INOX: R-City Mall, Ghatkopar',logo:'inox',cancel:true,min:220,max:480,times:[{t:'04:05 PM',tag:'INSIGNIA'},{t:'10:20 PM',night:true}]},
+];
+const PRICE_CHIPS = [{l:'₹0 - ₹200',a:0,b:200},{l:'₹201 - ₹300',a:201,b:300},{l:'₹301 - ₹500',a:301,b:500},{l:'₹501+',a:501,b:99999}];
+const OFFERS = ['YES Private Debit Card Offer','Flat ₹100 off on RuPay Credit Cards','Buy 1 Get 1 on Kotak Debit Cards'];
+const VEH = ['🚲','🛵','🛺','🚗','🚙','🚐','🚐','🚌','🚌','🚌'];
+
+/* seat layout: 24 columns. numbers = seat, 0 = gap, 'W' = wheelchair */
+const R = (a,b)=>{const o=[];for(let i=a;i>=b;i--)o.push(i);return o;};
+const G = n=>Array(n).fill(0);
+const BIG = [...R(20,15),...G(2),...R(14,4),...G(2),...R(3,1)];
+const MID = [...R(17,12),...G(2),...R(11,1),...G(5)];
+const LAYOUT = [
+  {cat:'RECLINER',price:850,rows:[{id:'L',cells:[0,14,13,0,12,11,0,0,10,9,0,8,7,0,6,5,0,4,3,0,2,1,0,0]}]},
+  {cat:'PREMIUM',price:340,rows:['K','J','I','H','G','F'].map(id=>({id,cells:BIG})).concat([{id:'E',cells:MID}])},
+  {cat:'EXECUTIVE',price:320,rows:[{id:'D',cells:MID},{id:'C',cells:MID},{sp:true},{id:'B',cells:MID}]},
+  {cat:'NORMAL',price:300,rows:[{id:'A',cells:[...R(15,10),...G(2),...R(9,6),0,'W','W',0,3,2,1,...G(5)]}]},
+];
+const SOLD = new Set(['L14','L13','K9','K8','K7','K6','K5','K4']);
+const PRICE_OF = {}; LAYOUT.forEach(c=>c.rows.forEach(r=>r.id&&(PRICE_OF[r.id]={price:c.price,cat:c.cat})));
+
+/* ================= state ================= */
+const S = {
+  screen:'showtimes', day:0, cancelOnly:false, price:null, sort:'Relevance', favs:new Set(), tip:1,
+  cinema:null, time:null, count:2, sel:[], mapScroll:0, feesOpen:false, donate:false,
+  preferred:null, ov:null, ticketOpen:true, bookingId:'', screenNo:1, offerIx:0, progress:0,
+  /* split pay */
+  split:false, payFor:1, group:null, linkId:'', holdEnd:0, shared:false
+};
+const ME = 'Rohan';               // logged-in user (persona from the brief)
+const FRIENDS = ['Aditi','Kabir','Neha','Arjun','Ishaan','Meera','Tanvi','Dev','Sara'];
+const HOLD_MIN = 20;
+/* friend scenario: Rohan's group booking as the invitee sees it */
+const FG = {seats:['F9','F10','F11','F12','F13','F14'], paid:['F9','F10','F11'], link:'HTL9QG'};
+const fUnpaid = () => FG.seats.filter(s=>!FG.paid.includes(s));
+S.mode='org'; S.fk=1; S.fHoldEnd=0;
+const $app = document.getElementById('app'), $ov = document.getElementById('ov');
+const rupee = n => '₹'+n.toFixed(2);
+const rupee0 = n => '₹'+(Number.isInteger(n)?n:n.toFixed(2));
+const subtotal = () => S.sel.reduce((s,id)=>s+PRICE_OF[id.match(/^[A-Z]/)[0]].price,0);
+const fee = () => Math.round(subtotal()*0.118*100)/100;
+const total = () => subtotal()+fee()+(S.donate?1:0);
+const numSort = (a,b)=>a.localeCompare(b,undefined,{numeric:true});
+const seatsSorted = () => [...S.sel].sort(numSort);
+const seatCost = id => {const p=PRICE_OF[id[0]].price;return p+Math.round(p*0.118*100)/100;};
+const mySeats = () => S.split ? seatsSorted().slice(0,S.payFor) : seatsSorted();
+const payAmount = () => S.split ? mySeats().reduce((s,id)=>s+seatCost(id),0)+(S.donate?1:0) : total();
+const fmtTime = d => d.toLocaleTimeString('en-US',{hour:'numeric',minute:'2-digit'});
+const dayLong = () => DAYS[S.day].d.toLocaleDateString('en-GB',{weekday:'short',day:'numeric',month:'short'}).replace(/^(\w+)/,'$1,');
+
+/* ================= screens ================= */
+const screens = {
+showtimes(){
+  let list = CINEMAS.filter(c=>(!S.cancelOnly||c.cancel)&&(!S.price||(c.min<=S.price.b&&c.max>=S.price.a)));
+  if(S.sort==='Price: Low to High') list=[...list].sort((a,b)=>a.min-b.min);
+  if(S.sort==='Price: High to Low') list=[...list].sort((a,b)=>b.max-a.max);
+  if(S.sort==='Favourites first') list=[...list].sort((a,b)=>S.favs.has(b.id)-S.favs.has(a.id));
+  return `<div class="screen">
+  <div class="hdr"><button class="ibtn" data-a="toast" data-v="This is the start of the prototype">${I.back}</button><h1>${MOVIE.title}</h1>
+    <button class="ibtn" data-a="toast" data-v="Search cinemas">${I.search}</button><button class="ibtn" data-a="toast" data-v="More filters">${I.filter}</button></div>
+  <div class="dates">${DAYS.map((d,i)=>`<button class="date ${i===S.day?'on':''} ${d.open?'':'off'}" data-a="day" data-v="${i}"><small>${d.dow}</small><b>${d.n}</b><small>${d.mon}</small></button>`).join('')}</div>
+  <div class="langrow">${MOVIE.lang} &nbsp;•&nbsp; ${MOVIE.fmt}</div>
+  <div class="chips">
+    <button class="chip sort" data-a="sortSheet">${I.sort} Sort by ${I.down}</button><div class="vsep"></div>
+    <button class="chip ${S.cancelOnly?'on':''}" data-a="cancelOnly">Cancellable</button>
+    ${PRICE_CHIPS.map((p,i)=>`<button class="chip ${S.price===p?'on':''}" data-a="price" data-v="${i}">${p.l}</button>`).join('')}
+  </div>
+  <div class="scroll"><div class="list">
+    ${list.length?list.map(c=>`<div class="cin">
+      <div class="cin-top"><div class="logo ${c.logo}">${{cine:'cinépolis',inox:'INOX',pvr:'PVR'}[c.logo]}</div>
+        <h3>${c.name} <button data-a="info" data-v="${c.id}" style="display:inline">${I.info}</button></h3>
+        <button class="heart" data-a="fav" data-v="${c.id}">${I.heart(S.favs.has(c.id))}</button></div>
+      <div class="canc">${c.cancel?'Cancellation available':'Non-cancellable'}</div>
+      <div class="times">${c.times.map((t,i)=>`<button class="time" data-a="pickTime" data-v="${c.id}|${i}">${t.t}${t.tag?`<small>${t.tag}</small>`:''}${t.night?`<span class="moon">${I.moon}</span>`:''}</button>`).join('')}</div>
+    </div>`).join(''):`<div class="empty">No shows match these filters.<br><br><button class="chip" data-a="clearF">Clear filters</button></div>`}
+  </div></div>
+  ${S.tip?`<div class="tip"><span>${S.tip===1?`Mark Favourite Cinemas by tapping on the ♡`:`Tap ⓘ to view cinema amenities & location`}</span><button class="pg" data-a="tipNext">${S.tip}/2</button><button class="x" data-a="tipClose">${I.xs}</button></div>`:''}
+  </div>`;
+},
+seats(){
+  const full = S.sel.length===S.count;
+  let rows='', first=true;
+  const allRows=[];LAYOUT.forEach(c=>{allRows.push({cat:c});c.rows.forEach(r=>allRows.push(r));});
+  allRows.forEach((r,ix)=>{
+    const last = ix===allRows.length-1;
+    const rlc = `rl ${first?'first':''} ${last?'last':''}`; first=false;
+    if(r.cat){rows+=`<div class="srow cat"><div class="${rlc}"></div><div class="catlbl">Rs.${r.cat.price}&nbsp; ${r.cat.cat}</div></div>`;return;}
+    if(r.sp){rows+=`<div class="srow sp"><div class="${rlc}"></div></div>`;return;}
+    rows+=`<div class="srow"><div class="${rlc}">${r.id}</div><div class="cells">${r.cells.map((n,ci)=>{
+      if(n===0) return '<div class="gap"></div>';
+      const id = n==='W' ? r.id+(ci===13?5:4) : r.id+n;
+      const cls = SOLD.has(id)?'sold':S.sel.includes(id)?'sel':'';
+      return `<button class="st ${n==='W'?'wc':''} ${cls}" data-a="seat" data-v="${id}">${n==='W'?I.wc:n}</button>`;
+    }).join('')}</div></div>`;
+  });
+  return `<div class="screen">
+  <div class="hdr"><button class="ibtn" data-a="go" data-v="showtimes">${I.back}</button><div style="flex:1;min-width:0"><h1>${MOVIE.title}</h1><div class="sub">${S.cinema.name}</div></div></div>
+  <div class="seatbar"><span>${dayLong()}</span><button class="tk" data-a="countSheet">${I.pencil()} ${S.count} Ticket${S.count>1?'s':''}</button></div>
+  <div class="showchip"><span>${S.time.t}</span></div>
+  <div class="map" id="map"><div class="map-in">${rows}
+    <div class="screenwrap"><svg class="scr" viewBox="0 0 560 46"><path d="M40 2h480l38 34H2z" fill="#eef7fc" stroke="#cfe3f0"/><path d="M60 6h440l30 24H30z" fill="#d1ecfa"/><path d="M2 36h556v8H2z" fill="#eef7fc" stroke="#cfe3f0"/></svg><div class="scrcap">All eyes this way please!</div></div>
+  </div></div>
+  <div class="legend"><span><i style="border:1px solid #1ea83c"></i>Available</span><span><i style="background:#1ea83c"></i>Selected</span><span><i style="background:#e6e6e6"></i>Sold</span></div>
+  <div class="offer"><div class="ol">${I.offerTick}</div><span id="offerTxt">${OFFERS[S.offerIx]}</span><div class="cnt"><span id="offerN">${S.offerIx+1}/3</span><div class="dots" id="offerDots">${OFFERS.map((_,i)=>`<i class="${i===S.offerIx?'on':''}"></i>`).join('')}</div></div></div>
+  ${full?`<div class="cta-wrap"><button class="cta" data-a="toConfirm">Pay ${rupee0(subtotal())}</button></div>`:''}
+  </div>`;
+},
+confirm(){
+  const byCat={};[...S.sel].sort((a,b)=>a.localeCompare(b,undefined,{numeric:true})).forEach(id=>{const c=PRICE_OF[id[0]].cat;(byCat[c]=byCat[c]||[]).push(id);});
+  const seatsTxt = Object.entries(byCat).map(([c,ids])=>`${c} - ${ids.join(', ')}`).join(' | ');
+  const d=DAYS[S.day].d; const dstr=d.toLocaleDateString('en-GB',{weekday:'short',day:'numeric',month:'short'}).replace(/^(\w+)/,'$1,')+', '+d.getFullYear();
+  const base = Math.round(fee()/1.18*100)/100;
+  return `<div class="screen" style="background:var(--bg)">
+  <div class="hdr" style="background:var(--bg);border:0;padding-bottom:0"><button class="ibtn" data-a="askCancelTxn">${I.back}</button><h1>Confirm booking</h1></div>
+  <div class="scroll"><div class="conf">
+    <div class="card"><div class="bk1"><h2>${MOVIE.title}</h2><span class="n">${S.count}</span></div>
+      <div class="bk2"><span>${dstr} | ${S.time.t}</span><button class="mt" data-a="toast" data-v="M-Ticket: show the QR on your phone at entry">${I.pencil()} M-Ticket</button></div>
+      <div class="muted">${MOVIE.lang} (${MOVIE.fmt})</div><div class="muted">${seatsTxt}</div><div class="muted">${S.cinema.name}</div></div>
+    <div class="card">
+      <div class="prow"><span>Ticket(s) price</span><span>${rupee(subtotal())}</span></div>
+      <button class="prow" style="width:100%" data-a="fees"><span>Convenience fees <span class="chev ${S.feesOpen?'up':''}">${I.down}</span></span><span>${rupee(fee())}</span></button>
+      ${S.feesOpen?`<div class="feebrk"><div class="prow"><span>Base amount</span><span>${rupee(base)}</span></div><div class="prow"><span>Integrated GST (IGST) @ 18%</span><span>${rupee(fee()-base)}</span></div></div>`:''}
+      ${S.donate?`<div class="prow"><span>Contribution to BookASmile</span><span>₹1.00</span></div>`:''}
+      <div class="prow tot"><span>Order total</span><span>${rupee(total())}</span></div></div>
+    ${splitCard()}
+    <div class="card contact"><h4>For Sending Booking Details <button data-a="toast" data-v="Edit contact details">${I.pencil()} Edit</button></h4>
+      <p>+91-98XXXXXX10 | you@example.com<br>Maharashtra (for GST purposes)</p></div>
+    <div class="card"><button class="offers" data-a="toast" data-v="No offers applicable on this booking">${I.badge}<span>Apply Offers</span>${I.right}</button></div>
+    <div class="card consent">By proceeding, I express my consent to complete this transaction.</div>
+  </div></div>
+  <div class="foot"><div class="t"><small>${S.split?`Your share (${S.payFor} of ${S.count})`:'Total'}</small><b>${rupee(payAmount())}</b></div><button class="cta" data-a="go" data-v="payment">Continue</button></div>
+  </div>`;
+},
+payment(){
+  const opts=[['upi','Pay by any UPI App',I.upi],['card','Debit/Credit Card',I.card],['wallet','Mobile Wallets',I.wallet],['gift','Gift Voucher',I.gift],['nb','Net Banking',I.monitor],['later','Pay Later',I.later],['pts','Redeem Points',I.points]];
+  return `<div class="screen">
+  <div class="hdr"><button class="ibtn" data-a="go" data-v="${S.mode==='friend'?'fconfirm':'confirm'}">${I.back}</button><h1>Payment</h1></div>
+  <div class="scroll" style="background:#f2f2f2">
+    <div class="amt"><span>${S.split?`Your share<small>${S.payFor} of ${S.count} seats</small>`:'Amount Payable'}</span><b>${rupee(payAmount())}</b></div>
+    <div class="paysec"><h6>OTHER PAYMENT OPTIONS</h6>
+      <div class="popts">${opts.map(o=>`<button class="popt" data-a="popt" data-v="${o[0]}"><span class="pi">${o[2]}</span><span>${o[1]}</span></button>`).join('')}</div></div>
+    <div class="paybot"><div class="brandrow"><div class="brand">book<span>my</span>show</div><div class="seal"><div>SEAL OF SECURE<i>🔒</i>PAYMENT</div></div></div>
+      <h6>Note</h6><ol><li>Registrations/Tickets once booked can't be exchanged, cancelled or refunded.</li><li>If booked via Credit/Debit Card, the card holder must be present at the ticket counter while collecting the ticket(s).</li></ol>
+      <h6>As safe as it gets</h6><div class="badges"><span>ENTRUST</span><span>PCI-DSS</span><span>Verified by VISA</span><span>SecureCode</span><span>SafeKey</span></div></div>
+  </div></div>`;
+},
+upi(){
+  const apps=[['WhatsApp',I.chat],['Google Pay','<span style="font-size:13px"><b style="color:#4285f4">G</b> Pay</span>'],['Other UPI',I.upi]];
+  return `<div class="screen" style="background:var(--bg)">
+  <div class="hdr" style="background:var(--bg);border:0"><button class="ibtn" data-a="go" data-v="payment">${I.back}</button><h1>Pay by any UPI App</h1></div>
+  <div class="upilist"><div class="card">${apps.map(a=>`<button class="upi" data-a="upiApp" data-v="${a[0]}"><span class="ul">${a[1]}</span><span>${a[0]}</span>${I.right}</button>`).join('')}</div></div>
+  </div>`;
+},
+processing(){
+  return `<div class="screen">
+  <div class="hdr" style="background:var(--bg);border:0"><button class="ibtn" data-a="askCancelPay">${I.back}</button><h1 style="font-size:17px">Processing Payment of ${rupee(payAmount())}</h1></div>
+  <div class="proc">
+    <div class="warn">Please avoid pressing the back button or closing the app. Doing so will cancel your payment request.</div>
+    <div class="pwrap">
+      <div class="bar"><i id="pbar" style="width:${S.progress}%"></i></div>
+      <div class="pct" id="ppct">${Math.floor(S.progress)}%</div>
+      <h3>Please wait a minute!</h3>
+      <p>We're confirming your payment you will be<br>redirected automatically.</p>
+    </div>
+  </div></div>`;
+},
+group(){
+  const g=S.group, n=g.length;
+  const done=g.filter(s=>s.status==='done').length, canc=g.filter(s=>s.status==='canc').length, wait=n-done-canc;
+  const c=S.cinema, d=DAYS[S.day].d.toLocaleDateString('en-GB',{weekday:'short',day:'numeric',month:'short'}).replace(/^(\w+)/,'$1,');
+  const link='bms.co/g/'+S.linkId;
+  return `<div class="screen" style="background:var(--bg)">
+  <div class="hdr" style="background:#fff"><button class="ibtn" data-a="restart">${I.xs.replace('width="12" height="12"','width="18" height="18"')}</button><h1>Group booking</h1><button class="ibtn" data-a="refresh">↻</button></div>
+  <div class="scroll"><div class="grp">
+    <div class="okbanner"><div class="ck">✓</div><div><b>You paid ${rupee(S.paidAmt)} · ${S.payFor} seat${S.payFor>1?'s':''} confirmed</b><small>${wait?`${wait} seat${wait>1?'s':''} waiting for friends to pay`:'Everyone has sorted their seats 🎉'}</small></div></div>
+    ${wait?`<div class="hold"><span>Unpaid seats held till <b style="font-size:13px;color:#5a4a1a">${fmtTime(new Date(S.holdEnd))}</b></span><b id="holdT">--:--</b></div>`:''}
+    <div class="card mini"><h3>${MOVIE.title}</h3><p>${d} | ${S.time.t} · ${MOVIE.lang} (${MOVIE.fmt})</p><p>${c.name}</p></div>
+    ${wait?`<div class="card linkcard"><h4>Invite friends to pay for their seats</h4><p>Anyone with this link can pay ${rupee(seatCost(g.find(s=>s.status==='wait').seat))} for their seat.</p>
+      <div class="linkbox">🔗<span>${link}</span><button data-a="copyLink">Copy</button></div>
+      <button class="sharebtn" data-a="openShare">${I.share.replace(/#1b1b1b/,'#fff').replace('width="26" height="26"','width="18" height="18"')} Share link</button></div>`:''}
+    <div class="card">
+      <div class="prog"><b>Seat status</b><span>${done} of ${n} paid${canc?` · ${canc} released`:''}</span></div>
+      <div class="pbar"><i style="width:${done/n*100}%"></i><i style="width:${canc/n*100}%;background:#e9a3a9"></i></div>
+      <div style="margin-top:6px">${g.map((s,i)=>`<div class="srowx ${s.flash?'flash':''}">
+        <span class="sbadge ${s.status}">${s.seat}</span>
+        <div class="who"><b>${s.status==='done'?s.name:s.status==='canc'?'Released':'Awaiting payment'}</b><small>${s.note}</small></div>
+        <span class="pill ${s.status}">${{done:'Done',wait:'Waiting',canc:'Cancelled'}[s.status]}</span></div>`).join('')}</div>
+    </div>
+  </div></div>
+  <div class="cta-wrap" style="border-top:1px solid #eee"><button class="cta" data-a="go" data-v="ticket">View my M-Ticket (${S.payFor} seat${S.payFor>1?'s':''})</button></div>
+  </div>`;
+},
+/* ===== FRIEND (invitee) screens ===== */
+fchat(){
+  const backW=I.back.replace('#222','#fff');
+  return `<div class="screen">
+  <div class="wahdr"><button class="ibtn" data-a="toast" data-v="Chats">${backW}</button><div class="av">R</div><div style="flex:1"><b>Rohan</b><small>online</small></div><span class="ic">📹</span><span class="ic">📞</span><span class="ic">⋮</span></div>
+  <div class="wabody">
+    <div class="daychip">Today</div>
+    <div class="msg">Booked seats for Wildwood tonight 🎬 11:30 PM show at Nexus Seawoods<span class="tm">11:02 PM</span></div>
+    <div class="msg">
+      <button class="lp" data-a="openInvite"><div class="lpimg">WILDWOOD</div><div class="lpt"><b>Join Rohan's Wildwood booking 🍿</b><small>Fri, 20 Nov · 11:30 PM · ${fUnpaid().length} seats left</small><small>bms.co</small></div></button>
+      Pay for your seat here 👇<br><a data-a="openInvite">https://bms.co/g/${FG.link}</a><span class="tm">11:03 PM</span></div>
+    <div class="msg">seats are held for 20 mins only, pay fast 🏃<span class="tm">11:03 PM</span></div>
+    <div class="msg out">on it!<span class="tm">11:04 PM ✓✓</span></div>
+  </div>
+  <div class="wainput"><div class="box">😊&nbsp; Message</div><div class="mic">🎤</div></div>
+  </div>`;
+},
+finvite(){
+  const per=seatCost(fUnpaid()[0]||'F12'), left=fUnpaid().length;
+  // full theatre layout: friends' paid seats grey, open group seats highlighted, everything else faded
+  let rows='', first=true;
+  const all=[];LAYOUT.forEach(c=>{all.push({cat:c});c.rows.forEach(r=>all.push(r));});
+  all.forEach((r,ix)=>{
+    const rlc=`rl ${first?'first':''} ${ix===all.length-1?'last':''}`; first=false;
+    if(r.cat){rows+=`<div class="srow cat"><div class="${rlc}"></div><div class="catlbl">Rs.${r.cat.price}&nbsp; ${r.cat.cat}</div></div>`;return;}
+    if(r.sp){rows+=`<div class="srow sp"><div class="${rlc}"></div></div>`;return;}
+    rows+=`<div class="srow"><div class="${rlc}">${r.id}</div><div class="cells">${r.cells.map((n,ci)=>{
+      if(n===0) return '<div class="gap"></div>';
+      const id=n==='W'?r.id+(ci===13?5:4):r.id+n;
+      const cls=FG.paid.includes(id)?'sold gpaid':FG.seats.includes(id)?'gopen':'faded '+(SOLD.has(id)?'sold':'');
+      return `<span class="st ${n==='W'?'wc':''} ${cls}" data-id="${id}">${n==='W'?I.wc:n}</span>`;
+    }).join('')}</div></div>`;
+  });
+  return `<div class="screen">
+  <div class="hdr"><button class="ibtn" data-a="go" data-v="fchat">${I.back}</button><div style="flex:1;min-width:0"><h1>${MOVIE.title}</h1><div class="sub">${S.cinema.name}</div></div></div>
+  <div class="invtop">
+    <div class="host"><div class="av">R</div><div><b>Rohan invited you</b><small>${dayLong()} | ${S.time.t} · ${left} seat${left>1?'s':''} open · ${rupee(per)} per seat</small></div></div>
+    <div class="hold"><span>Unpaid seats held for</span><b id="fholdT">--:--</b></div>
+  </div>
+  <div class="map" id="map"><div class="map-in">${rows}
+    <div class="screenwrap"><svg class="scr" viewBox="0 0 560 46"><path d="M40 2h480l38 34H2z" fill="#eef7fc" stroke="#cfe3f0"/><path d="M60 6h440l30 24H30z" fill="#d1ecfa"/><path d="M2 36h556v8H2z" fill="#eef7fc" stroke="#cfe3f0"/></svg><div class="scrcap">All eyes this way please!</div></div>
+  </div></div>
+  <div class="legend"><span><i style="background:#e6e6e6"></i>Paid by friends</span><span><i style="background:#e8f6ea;border:2px solid #1ea83c"></i>Open for you</span></div>
+  <div class="foot2"><button class="ghost" data-a="fAskCancel">Cancel</button><button class="cta" data-a="fPay">Pay</button></div>
+  </div>`;
+},
+fconfirm(){
+  const k=S.fk, open=fUnpaid(), n=open.length;
+  const d=DAYS[S.day].d, dstr=d.toLocaleDateString('en-GB',{weekday:'short',day:'numeric',month:'short'}).replace(/^(\w+)/,'$1,')+', '+d.getFullYear();
+  const base=Math.round(fee()/1.18*100)/100;
+  return `<div class="screen" style="background:var(--bg)">
+  <div class="hdr" style="background:var(--bg);border:0;padding-bottom:0"><button class="ibtn" data-a="go" data-v="finvite">${I.back}</button><h1>Confirm booking</h1></div>
+  <div class="scroll"><div class="conf">
+    <div class="card"><div class="bk1"><h2>${MOVIE.title}</h2><span class="n">${k}</span></div>
+      <div class="bk2"><span>${dstr} | ${S.time.t}</span><span class="mt">${I.pencil()} M-Ticket</span></div>
+      <div class="muted">${MOVIE.lang} (${MOVIE.fmt})</div><div class="muted">PREMIUM - ${S.sel.join(', ')}</div><div class="muted">${S.cinema.name}</div></div>
+    <div class="card">
+      <div class="prow"><span>Ticket(s) price</span><span>${rupee(subtotal())}</span></div>
+      <button class="prow" style="width:100%" data-a="fees"><span>Convenience fees <span class="chev ${S.feesOpen?'up':''}">${I.down}</span></span><span>${rupee(fee())}</span></button>
+      ${S.feesOpen?`<div class="feebrk"><div class="prow"><span>Base amount</span><span>${rupee(base)}</span></div><div class="prow"><span>Integrated GST (IGST) @ 18%</span><span>${rupee(fee()-base)}</span></div></div>`:''}
+      <div class="prow tot"><span>Order total</span><span>${rupee(total())}</span></div></div>
+    <div class="splitcard"><div class="splitbody" style="animation:none;padding-top:14px">
+      <div class="steprow"><div><b>Select the number of seats you want to pay for</b></div>
+        <div class="stepper"><button data-a="fk" data-v="-1" ${k<=1?'disabled':''}>−</button><span><b>${k}</b></span><button data-a="fk" data-v="1" ${k>=n?'disabled':''}>+</button></div></div>
+      <div class="seatchips">${FG.seats.map(id=>`<span class="sc ${FG.paid.includes(id)?'paid':S.sel.includes(id)?'me':''}">${id}</span>`).join('')}</div>
+      <div class="holdnote"><span>${k>1?`You're also covering <b>${k-1} more seat${k>2?'s':''}</b> for friends. `:''}Seats are given next to friends who've already paid.</span></div>
+    </div></div>
+    <div class="card contact"><h4>For Sending Booking Details <span style="color:var(--red-dark);font-weight:400;font-size:15px">Edit</span></h4><p>+91-97XXXXXX21 | friend@example.com<br>Maharashtra (for GST purposes)</p></div>
+    <div class="card consent">By proceeding, I express my consent to complete this transaction.</div>
+  </div></div>
+  <div class="foot"><div class="t"><small>Total</small><b>${rupee(total())}</b></div><button class="cta" data-a="go" data-v="payment">Continue</button></div>
+  </div>`;
+},
+foptout(){
+  return `<div class="screen"><div class="optout">
+    <div class="ic">✕</div><h2>You've opted out</h2>
+    <p>We've let Rohan know. Your seat is now open for others in the group, and you haven't been charged.</p>
+    <button class="cta" data-a="go" data-v="fchat">Back to chat</button>
+    <button class="lnk" data-a="go" data-v="finvite">Changed your mind? Pay for a seat</button>
+  </div></div>`;
+},
+ticket(){
+  const c=S.cinema; const sorted=mySeats();
+  const tSub=sorted.reduce((s,id)=>s+PRICE_OF[id[0]].price,0), tFee=Math.round(tSub*0.118*100)/100, tTot=tSub+tFee+(S.donate?1:0);
+  const d=DAYS[S.day].d.toLocaleDateString('en-GB',{weekday:'short',day:'numeric',month:'short'}).replace(/^(\w+)/,'$1,').replace(/(\d+) (\w+)/,'$1 $2');
+  return `<div class="screen" style="background:#3b3b3b">
+  <div class="tkscreen">
+    <div class="tkhead"><span>Your Ticket</span><button data-a="toast" data-v="Share ticket">${I.share}</button><button class="closex" data-a="${S.group?'go':'restart'}" data-v="group">${I.x}</button></div>
+    <div class="ticket">
+      <div class="tk-top">
+        <button class="poster" data-a="toast" data-v="Playing trailer…"><div class="pt">WILD<br>WOOD</div><div class="play">▶</div><div class="wt">Watch Trailer</div></button>
+        <div><h2>${MOVIE.title}</h2><p>${MOVIE.lang}, ${MOVIE.fmt}</p><p>${d} | ${S.time.t}</p><p>${c.name.split(',')[0]}</p></div>
+        <span class="mtk">M-Ticket</span>
+      </div>
+      <div style="position:relative"><span class="notch" style="left:-10px;top:14px"></span><span class="notch" style="right:-10px;top:14px"></span>
+        <button class="tap" data-a="tkToggle">Tap to ${S.ticketOpen?'hide':'view'} details</button></div>
+      ${S.ticketOpen?`<div class="tkd"><div class="n">${sorted.length} Ticket(s)</div><div class="scr">SCREEN ${S.screenNo}</div><div class="seats">${sorted.map(s=>{const p=PRICE_OF[s[0]];return p.cat.slice(0,2)+'-'+s;}).join(', ')}</div>
+        <svg class="qr" viewBox="0 0 25 25" shape-rendering="crispEdges">${qr(S.bookingId)}</svg>
+        <div class="bid">BOOKING ID: ${S.bookingId}</div></div>`:'<div style="height:22px"></div>'}
+      <div class="cinfo">${c.cancel?'Cancellation available : up to 20 minutes before showtime':'Cancellation unavailable : this cinema does not allow cancellations'}</div>
+      <button class="support" data-a="toast" data-v="Connecting you to support…">${I.phone}<span>Contact<br>support</span></button>
+      <div class="dash"><span class="notch" style="left:-32px;top:-10px"></span><span class="notch" style="right:-32px;top:-10px"></span></div>
+      <div class="tktot" style="margin-top:20px">
+        <div class="prow"><span>Total Amount</span><span>${rupee(tTot)}</span></div>
+        <div class="prow"><span>Ticket(s) price (${sorted.length})</span><span>${rupee(tSub)}</span></div>
+        <div class="prow"><span>Convenience fee</span><span>${rupee(tFee)}</span></div>
+        ${S.donate?`<div class="prow"><span>BookASmile</span><span>₹1.00</span></div>`:''}
+        <div class="prow"><span>Discount</span><span>- ₹0.00</span></div>
+      </div>
+    </div>
+  </div></div>`;
+}
+};
+
+function splitCard(){
+  const n=S.count, k=S.payFor, seats=seatsSorted();
+  if(n<2) return '';
+  const left=n-k;
+  return `<div class="splitcard"><h5>How would you like to pay?</h5>
+    <button class="radio ${!S.split?'on':''}" data-a="split" data-v="0"><i></i><div><b>Pay for all</b><small>Pay for all the ${n} seats</small></div><span>${rupee(total())}</span></button>
+    <button class="radio ${S.split?'on':''}" data-a="split" data-v="1"><i></i><div><b>Split</b><small>Pay for your seat, invited people pay for theirs</small></div><span class="newtag">NEW</span></button>
+    ${S.split?`<div class="splitbody">
+      <div class="steprow"><div><b>Select the number of seats you want to pay for</b></div>
+        <div class="stepper"><button data-a="payFor" data-v="-1" ${k<=1?'disabled':''}>−</button><span><b>${k}</b></span><button data-a="payFor" data-v="1" ${k>=n?'disabled':''}>+</button></div></div>
+      <div class="seatchips">${seats.map((id,i)=>`<span class="sc ${i<k?'me':''}">${id}</span>`).join('')}</div>
+      <div class="holdnote"><span>⏱</span><span>${left?`The other <b>${left} seat${left>1?'s':''}</b> will be held for ${HOLD_MIN} min. Friends pay via a link; unpaid seats are released automatically.`:`You're covering every seat, so this is the same as paying the full amount.`}</span></div>
+    </div>`:''}
+  </div>`;
+}
+
+/* ================= overlays ================= */
+const overlays = {
+  count(){
+    const cats=LAYOUT.map(c=>c);
+    return `<div class="dim" data-a="closeOv"></div><div class="sheet"><div class="grab"></div><h2>How many seats?</h2>
+      <div class="veh"><span>${VEH[S.count-1]}</span></div>
+      <div class="nums">${Array.from({length:10},(_,i)=>`<button class="${i+1===S.count?'on':''}" data-a="count" data-v="${i+1}">${i+1}</button>`).join('')}</div>
+      <div class="cats">${[cats[3],cats[2],cats[1]].map(c=>`<div>${c.cat}<b>₹${c.price}</b><em>AVAILABLE</em></div>`).join('')}<div class="r">${cats[0].cat}<b>₹${cats[0].price}</b><em>AVAILABLE</em></div></div>
+      <div class="cta-wrap"><button class="cta" data-a="selectSeats">Select Seats</button></div></div>`;
+  },
+  cancelTxn(){
+    return `<div class="dim"></div><div class="dialog dlg-bms"><h4>BookMyShow</h4><p>Are you sure that you want to cancel your transaction?</p>
+      <div class="row"><button data-a="closeOv">NO</button><button data-a="cancelTxnYes">YES</button></div></div>`;
+  },
+  fcancel(){
+    return `<div class="dim"></div><div class="dialog dlg-pay"><h4>Are you sure?</h4><p>Rohan will be told you're not coming, and your seat will be opened up for others in the group.</p>
+      <button class="yes" data-a="fCancelYes">Yes, Cancel</button><button class="no" data-a="closeOv">No, Stay</button></div>`;
+  },
+  cancelPay(){
+    return `<div class="dim"></div><div class="dialog dlg-pay"><h4>Cancel Payment?</h4><p>Going back will cancel your ongoing payment for this booking.</p>
+      <button class="yes" data-a="cancelPayYes">Yes, Cancel</button><button class="no" data-a="cancelPayNo">No, Stay</button></div>`;
+  },
+  share(){
+    const left=S.group.filter(s=>s.status==='wait').length;
+    const apps=[['WhatsApp','#25d366','W'],['Messages','#1a73e8','✉'],['Gmail','#ea4335','M'],['Telegram','#2aa3df','➤'],['Instagram','#d6249f','◎'],['Snapchat','#f7d000','👻'],['Slack','#611f69','#'],['Bluetooth','#2962ff','ᛒ']];
+    return `<div class="dim" data-a="closeOv"></div><div class="sheet share"><div class="grab"></div>
+      <div class="shtitle">Sharing link</div>
+      <div class="shprev"><div class="th">WILD<br>WOOD</div><div><b>Join my ${MOVIE.title} booking 🍿</b><small>${dayLong()}, ${S.time.t} · ${left} seat${left>1?'s':''} left · pay before ${fmtTime(new Date(S.holdEnd))}<br>bms.co/g/${S.linkId}</small></div></div>
+      <div class="shacts"><button data-a="copyLink">⧉ Copy</button><button data-a="shareTo" data-v="Nearby Share">⇄ Nearby</button></div>
+      <div class="shapps">${apps.map(a=>`<button data-a="shareTo" data-v="${a[0]}"><i style="background:${a[1]}">${a[2]}</i>${a[0]}</button>`).join('')}</div>
+    </div>`;
+  },
+  sort(){
+    const o=['Relevance','Price: Low to High','Price: High to Low','Favourites first'];
+    return `<div class="dim" data-a="closeOv"></div><div class="sheet actsheet"><h5>Sort by</h5>${o.map(x=>`<button class="${x===S.sort?'on':''}" data-a="sortBy" data-v="${x}">${x}${x===S.sort?'<span>✓</span>':''}</button>`).join('')}</div>`;
+  }
+};
+
+/* ================= helpers ================= */
+function qr(seed){
+  let h=0;for(const ch of seed)h=(h*31+ch.charCodeAt(0))>>>0;
+  const rnd=()=>((h=(h*1664525+1013904223)>>>0)/4294967296);
+  const n=25,inF=(x,y,ox,oy)=>x>=ox&&x<ox+8&&y>=oy&&y<oy+8;
+  let out='';
+  const finder=(ox,oy)=>`<rect x="${ox}" y="${oy}" width="7" height="7"/><rect x="${ox+1}" y="${oy+1}" width="5" height="5" fill="#fff"/><rect x="${ox+2}" y="${oy+2}" width="3" height="3"/>`;
+  for(let y=0;y<n;y++)for(let x=0;x<n;x++){
+    if(inF(x,y,0,0)||inF(x,y,17,0)||inF(x,y,0,17))continue;
+    if(rnd()<.5)out+=`<rect x="${x}" y="${y}" width="1" height="1"/>`;
+  }
+  return out+finder(0,0)+finder(18,0)+finder(0,18);
+}
+let toastT;
+function toast(msg){
+  document.querySelectorAll('.toast').forEach(t=>t.remove());
+  const t=document.createElement('div');t.className='toast';t.textContent=msg;document.getElementById('phone').appendChild(t);
+  clearTimeout(toastT);toastT=setTimeout(()=>t.remove(),1800);
+}
+let offerT, procT, lastScreen=null, lastOv=null;
+const KEEP_SCROLL = ['.scroll','#map','.dates','.chips','.tkscreen'];
+function render(){
+  const same = lastScreen===S.screen;
+  // remember scroll positions so in-page updates don't jump
+  const saved = same ? KEEP_SCROLL.map(sel=>{const e=$app.querySelector(sel);return e&&[e.scrollTop,e.scrollLeft];}) : [];
+  $app.innerHTML = screens[S.screen]();
+  if(!same) $app.firstElementChild.classList.add('enter');
+  else KEEP_SCROLL.forEach((sel,i)=>{const e=$app.querySelector(sel);if(e&&saved[i]){e.scrollTop=saved[i][0];e.scrollLeft=saved[i][1];}});
+  renderOv();
+  if(!same && S.screen==='finvite'){ // centre the map on the group's seats
+    const m=document.getElementById('map'), a=m.querySelector('[data-id=F14]'), b=m.querySelector('[data-id=F9]');
+    m.scrollLeft=(a.offsetLeft+b.offsetLeft+b.offsetWidth)/2-m.clientWidth/2;
+    m.scrollTop=a.offsetTop-m.clientHeight/2+12;
+  }
+  if(!same){
+    clearInterval(offerT);
+    if(S.screen==='seats') offerT=setInterval(()=>{S.offerIx=(S.offerIx+1)%3;const t=document.getElementById('offerTxt');if(!t)return;t.textContent=OFFERS[S.offerIx];document.getElementById('offerN').textContent=(S.offerIx+1)+'/3';document.querySelectorAll('#offerDots i').forEach((d,i)=>d.className=i===S.offerIx?'on':'');},3000);
+  }
+  lastScreen=S.screen;
+}
+function renderOv(){
+  if(S.ov===lastOv) return;   // same overlay already open: don't replay its animation
+  $ov.innerHTML = S.ov?overlays[S.ov]():'';
+  $ov.className = S.ov?'show':'';
+  lastOv=S.ov;
+}
+/* seat-count sheet: update in place (no re-open) */
+function updateCountSheet(){
+  const v=$ov.querySelector('.veh');
+  v.innerHTML=`<span>${VEH[S.count-1]}</span>`;
+  $ov.querySelectorAll('[data-a=count]').forEach(b=>b.classList.toggle('on',+b.dataset.v===S.count));
+}
+/* seat map: update seat states + footer in place */
+function updateSeats(){
+  $app.querySelectorAll('.st').forEach(b=>b.classList.toggle('sel',S.sel.includes(b.dataset.v)));
+  const tk=$app.querySelector('.seatbar .tk'); if(tk) tk.innerHTML=`${I.pencil()} ${S.count} Ticket${S.count>1?'s':''}`;
+  let wrap=$app.querySelector('.cta-wrap');
+  if(S.sel.length===S.count){
+    if(!wrap){wrap=document.createElement('div');wrap.className='cta-wrap';$app.querySelector('.screen').appendChild(wrap);}
+    wrap.innerHTML=`<button class="cta" data-a="toConfirm">Pay ${rupee0(subtotal())}</button>`;
+  } else if(wrap) wrap.remove();
+}
+function startFriend(){
+  S.cinema=CINEMAS[0];S.time=S.cinema.times[0];S.day=0;
+  S.fk=1;fSetSeats();
+  S.fHoldEnd=Date.now()+(17*60+42)*1000;   // Rohan shared the link a couple of minutes ago
+  go('fchat');
+}
+/* friend gets the open seats closest to the already-paid block */
+function fSetSeats(){S.sel=fUnpaid().slice(0,S.fk);S.count=S.sel.length;S.split=false;}
+setInterval(()=>{
+  const e=document.getElementById('fholdT'); if(!e)return;
+  const ms=Math.max(0,S.fHoldEnd-Date.now());
+  e.textContent=String(Math.floor(ms/60000)).padStart(2,'0')+':'+String(Math.floor(ms/1000)%60).padStart(2,'0');
+},500);
+function updateFoot(){
+  const t=$app.querySelector('.foot .t'); if(!t)return;
+  t.innerHTML=`<small>${S.split?`Your share (${S.payFor} of ${S.count})`:'Total'}</small><b>${rupee(payAmount())}</b>`;
+}
+function fit(){
+  const p=document.getElementById('phone');
+  if(innerWidth<=500){p.style.transform='';return;}
+  const s=Math.min(1,(innerHeight-40-64)/844,(innerWidth-40)/390);
+  p.style.transform=`scale(${s})`;
+}
+window.addEventListener('resize',fit);
+function go(s){S.screen=s;S.ov=null;render();$app.querySelector('.scroll')?.scrollTo(0,0);}
+function startProcessing(){
+  S.progress=0;go('processing');
+  clearInterval(procT);
+  procT=setInterval(()=>{
+    if(S.ov==='cancelPay')return;
+    S.progress=Math.min(100,S.progress+1.6);
+    const b=document.getElementById('pbar');if(b)b.style.width=S.progress+'%';
+    const pc=document.getElementById('ppct');if(pc)pc.textContent=Math.floor(S.progress)+'%';
+    if(S.progress>=100){clearInterval(procT);
+      S.bookingId=Array.from({length:7},()=>'ABCDEFGHJKLMNPQRSTUVWXYZ23456789'[Math.floor(Math.random()*32)]).join('');
+      S.screenNo=1+Math.floor(Math.random()*6);S.ticketOpen=true;
+      if(S.split && S.payFor<S.count) startGroup(); else {S.split=false;go('ticket');}}
+  },80);
+}
+
+/* ---------- group booking: create, hold timer, simulated friends ---------- */
+let holdT, simT=[];
+function startGroup(){
+  S.paidAmt=payAmount();
+  S.linkId=Math.random().toString(36).slice(2,8).toUpperCase();
+  S.holdEnd=Date.now()+HOLD_MIN*60000;
+  S.shared=false;
+  S.group=seatsSorted().map((seat,i)=>i===0
+    ? {seat,name:ME+' (You)',status:'done',note:'Paid '+rupee(seatCost(seat))}
+    : i<S.payFor
+      ? {seat,name:'Covered by you',status:'done',note:'Paid by '+ME}
+      : {seat,name:null,status:'wait',note:'Link not shared yet'});
+  S.group.forEach(s=>s.mine=s.status==='done');
+  clearInterval(holdT);
+  holdT=setInterval(tickHold,1000);
+  go('group'); tickHold();
+}
+function tickHold(){
+  if(!S.group)return;
+  const ms=S.holdEnd-Date.now();
+  const el=document.getElementById('holdT');
+  if(ms<=0){ // hold expired: release every unpaid seat
+    clearInterval(holdT);
+    S.group.forEach(s=>{if(s.status==='wait'){s.status='canc';s.note='Hold expired';}});
+    if(S.screen==='group')render(); return;
+  }
+  if(el){const m=Math.floor(ms/60000),s=Math.floor(ms/1000)%60;el.textContent=String(m).padStart(2,'0')+':'+String(s).padStart(2,'0');}
+}
+function flashRow(s){
+  s.flash=true;
+  if(S.screen==='group'){render();tickHold();}
+  setTimeout(()=>{s.flash=false;},1300);
+}
+/* A friend pays → they get the open seat closest to the already-paid block, so paid seats never have gaps. */
+function friendPays(name){
+  const s=S.group.find(x=>x.status==='wait'); if(!s)return;
+  Object.assign(s,{status:'done',name,note:'Paid '+rupee(seatCost(s.seat))});
+  toast(`${name} paid · got ${s.seat}`); flashRow(s);
+}
+/* A friend opts out → the open seat farthest from the group is released, so the block stays together. */
+function friendOptsOut(){
+  const open=S.group.filter(x=>x.status==='wait'); if(!open.length)return;
+  const s=open[open.length-1];
+  Object.assign(s,{status:'canc',note:'A friend opted out'});
+  toast(`${s.seat} released back to the cinema`); flashRow(s);
+}
+/* demo: after the link is shared, friends pay or opt out (we only learn a name once they pay) */
+function startSim(){
+  if(S.shared)return; S.shared=true;
+  S.group.forEach(s=>{if(s.status==='wait')s.note='Link shared · held till '+fmtTime(new Date(S.holdEnd));});
+  if(S.screen==='group'){render();tickHold();}
+  simT=[
+    setTimeout(()=>friendPays(FRIENDS[0]),3000),
+    setTimeout(()=>friendOptsOut(),6500),
+    setTimeout(()=>friendPays(FRIENDS[2]),10000),
+  ];
+}
+
+/* seat pick: auto-fill contiguous seats to the right (same block) like BMS */
+function pickSeat(id){
+  if(SOLD.has(id))return;
+  if(S.sel.includes(id)){S.sel=S.sel.filter(s=>s!==id);return;}
+  if(S.sel.length>=S.count) S.sel=[];
+  const rowId=id[0];
+  let row,cat;LAYOUT.forEach(c=>c.rows.forEach(r=>{if(r.id===rowId){row=r;cat=c;}}));
+  if(S.sel.length && PRICE_OF[S.sel[0][0]].cat!==cat.cat) S.sel=[];
+  const ids=row.cells.map((n,ci)=>n===0?null:n==='W'?rowId+(ci===13?5:4):rowId+n);
+  let i=ids.indexOf(id);
+  while(i<ids.length && ids[i] && S.sel.length<S.count && !SOLD.has(ids[i]) && !S.sel.includes(ids[i])){S.sel.push(ids[i]);i++;}
+}
+
+/* ================= actions ================= */
+const A = {
+  go:v=>go(v),
+  toast:v=>toast(v),
+  day:v=>{const d=DAYS[+v];if(!d.open)return toast('Bookings for '+d.dow+' '+d.n+' Nov open soon');S.day=+v;render();},
+  cancelOnly:()=>{S.cancelOnly=!S.cancelOnly;render();},
+  price:v=>{S.price=S.price===PRICE_CHIPS[+v]?null:PRICE_CHIPS[+v];render();},
+  clearF:()=>{S.price=null;S.cancelOnly=false;render();},
+  sortSheet:()=>{S.ov='sort';renderOv();},
+  sortBy:v=>{S.sort=v;S.ov=null;render();},
+  fav:v=>{const id=+v;S.favs.has(id)?S.favs.delete(id):S.favs.add(id);toast(S.favs.has(id)?'Added to favourites':'Removed from favourites');render();},
+  info:v=>toast(CINEMAS.find(c=>c.id===+v).name.split(':')[0]+' · M-Ticket · Food & Beverages'),
+  tipNext:()=>{S.tip=S.tip===1?2:1;render();},
+  tipClose:()=>{S.tip=0;render();},
+  pickTime:v=>{const [cid,ti]=v.split('|');S.cinema=CINEMAS.find(c=>c.id===+cid);S.time=S.cinema.times[+ti];S.sel=[];S.mapScroll=0;S.screen='seats';S.ov='count';render();},
+  countSheet:()=>{S.ov='count';renderOv();},
+  count:v=>{S.count=+v;updateCountSheet();},
+  selectSeats:()=>{if(S.sel.length>S.count)S.sel=S.sel.slice(0,S.count);S.ov=null;renderOv();updateSeats();},
+  closeOv:()=>{S.ov=null;renderOv();},
+  seat:v=>{pickSeat(v);updateSeats();},
+  toConfirm:()=>{S.feesOpen=false;go('confirm');},
+  fees:()=>{S.feesOpen=!S.feesOpen;render();},
+  donate:()=>{S.donate=!S.donate;render();},
+  askCancelTxn:()=>{S.ov='cancelTxn';renderOv();},
+  cancelTxnYes:()=>{S.donate=false;go('seats');},
+  popt:v=>{if(v==='upi')go('upi');else toast('Only UPI is wired up in this prototype');},
+  upiApp:v=>{S.preferred=v;startProcessing();},
+  pay:()=>startProcessing(),
+  askCancelPay:()=>{S.ov='cancelPay';renderOv();},
+  cancelPayNo:()=>{S.ov=null;renderOv();},
+  cancelPayYes:()=>{clearInterval(procT);S.ov=null;toast('Payment cancelled');go('payment');},
+  tkToggle:()=>{S.ticketOpen=!S.ticketOpen;render();},
+  restart:()=>{clearInterval(holdT);clearInterval(procT);simT.forEach(clearTimeout);simT=[];S.sel=[];S.donate=false;S.count=2;S.split=false;S.payFor=1;S.group=null;S.feesOpen=false;S.ov=null;
+    if(S.mode==='friend')startFriend(); else go('showtimes');},
+  mode:v=>{S.mode=v;document.querySelectorAll('#tabs button').forEach(b=>b.classList.toggle('on',b.dataset.v===v));A.restart();},
+  openInvite:()=>go('finvite'),
+  fPay:()=>{S.fk=1;fSetSeats();S.feesOpen=false;go('fconfirm');},
+  fk:v=>{S.fk=Math.max(1,Math.min(fUnpaid().length,S.fk+(+v)));fSetSeats();render();},
+  fAskCancel:()=>{S.ov='fcancel';renderOv();},
+  fCancelYes:()=>go('foptout'),
+  split:v=>{S.split=v==='1';$app.querySelector('.splitcard').outerHTML=splitCard();updateFoot();},
+  payFor:v=>{
+    S.payFor=Math.max(1,Math.min(S.count,S.payFor+(+v)));
+    // update in place: no re-render, no animation replay
+    const card=$app.querySelector('.splitcard'), k=S.payFor, n=S.count, left=n-k;
+    card.querySelector('.stepper span').innerHTML=`<b>${k}</b>`;
+    card.querySelector('[data-a=payFor][data-v="-1"]').disabled=k<=1;
+    card.querySelector('[data-a=payFor][data-v="1"]').disabled=k>=n;
+    card.querySelectorAll('.sc').forEach((c,i)=>c.classList.toggle('me',i<k));
+    card.querySelector('.holdnote span:last-child').innerHTML=left?`The other <b>${left} seat${left>1?'s':''}</b> will be held for ${HOLD_MIN} min. Friends pay via a link; unpaid seats are released automatically.`:`You're covering every seat, so this is the same as paying the full amount.`;
+    updateFoot();
+  },
+  openShare:()=>{S.ov='share';renderOv();},
+  shareTo:v=>{S.ov=null;renderOv();toast('Link sent via '+v);startSim();},
+  copyLink:()=>{try{navigator.clipboard.writeText('https://bms.co/g/'+S.linkId);}catch(e){}S.ov=null;renderOv();toast('Link copied');startSim();},
+  refresh:()=>{render();tickHold();const w=S.group.filter(s=>s.status==='wait').length;toast(w?`${w} seat${w>1?'s':''} still unpaid`:'All seats sorted');},
+};
+document.addEventListener('click',e=>{
+  const el=e.target.closest('[data-a]');if(!el)return;
+  e.preventDefault();A[el.dataset.a]?.(el.dataset.v,el);
+});
+
+/* clock */
+const tick=()=>{const d=new Date();document.getElementById('clock').textContent=d.getHours()%12||12;document.getElementById('clock').textContent+=':'+String(d.getMinutes()).padStart(2,'0');};
+tick();setInterval(tick,30000);
+fit();
+render();
+</script>
+</body>
+</html>
