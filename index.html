@@ -17,6 +17,8 @@ body{font-family:Roboto,system-ui,sans-serif;background:#d9dde3;color:var(--ink)
 #tabs{position:fixed;left:50%;bottom:12px;transform:translateX(-50%);display:flex;gap:4px;background:#fff;border-radius:30px;padding:4px;box-shadow:0 4px 16px rgba(0,0,0,.15);z-index:100}
 #tabs button{padding:10px 22px;border-radius:26px;font-size:14px;font-weight:500;color:#555;white-space:nowrap}
 #tabs button.on{background:var(--red);color:#fff}
+#tabs{max-width:calc(100vw - 24px);width:max-content;flex-wrap:wrap;justify-content:center;border-radius:22px}
+#tabs button{padding:9px 16px;font-size:13.5px}
 button{font:inherit;border:0;background:none;color:inherit;cursor:pointer}
 #phone{flex:none;transform-origin:center center;position:relative;width:390px;height:844px;background:#fff;border-radius:36px;overflow:hidden;box-shadow:0 30px 80px rgba(0,0,0,.25),0 0 0 10px #111;display:flex;flex-direction:column}
 @media (max-width:500px){body{background:#fff;padding-bottom:58px;align-items:flex-start}#phone{width:100vw;height:calc(100dvh - 58px);border-radius:0;box-shadow:none}#tabs{bottom:6px}}
@@ -282,8 +284,9 @@ svg{display:block}
 .okbanner{display:flex;gap:12px;align-items:center;background:#e8f6ea;border-radius:10px;padding:14px;margin-top:12px}
 .okbanner .ck{width:34px;height:34px;border-radius:50%;background:var(--green);color:#fff;display:grid;place-items:center;font-size:18px;flex:none}
 .okbanner b{font-weight:500;font-size:15px;display:block}.okbanner small{font-size:13px;color:#4a6b52}
-.hold{display:flex;align-items:center;justify-content:space-between;background:#fff7e0;border-radius:10px;padding:12px 14px;margin-top:10px;font-size:13px;color:#5a4a1a}
-.hold b{font-size:18px;font-weight:700;color:#b26a00;font-variant-numeric:tabular-nums}
+.hold{display:flex;align-items:center;justify-content:space-between;background:#ffe9b3;border:1.5px solid #f0b43c;border-radius:10px;padding:10px 12px 10px 14px;margin-top:10px;font-size:14px;font-weight:500;color:#5c3d00;box-shadow:0 2px 6px rgba(240,180,60,.25)}
+.hold b{font-weight:700}
+.hold > b{font-size:18px;color:#fff;background:#b45309;border-radius:8px;padding:4px 10px;font-variant-numeric:tabular-nums;letter-spacing:.5px}
 .mini h3{font-size:17px;font-weight:500}.mini p{font-size:13.5px;color:#666;margin-top:3px}
 .linkcard h4{font-size:15px;font-weight:500}.linkcard p{font-size:13px;color:#777;margin-top:4px;line-height:1.4}
 .linkbox{display:flex;align-items:center;gap:8px;border:1px dashed #c9c9c9;border-radius:8px;padding:10px 12px;margin-top:12px;font-size:14px;color:#333}
@@ -359,6 +362,48 @@ svg{display:block}
 .optout .cta{margin-top:28px}
 .optout .lnk{color:var(--red-dark);font-size:14px;font-weight:500;margin-top:16px}
 
+/* ---------- late link ---------- */
+.fwd{display:block;font-size:12px;color:#888;font-style:italic;margin-bottom:4px}
+.latecard{display:flex;gap:12px;background:#fff;border-radius:10px;padding:12px;margin-top:10px;box-shadow:0 1px 3px rgba(0,0,0,.08)}
+.lic{width:36px;height:36px;border-radius:50%;background:#fde8ea;display:grid;place-items:center;flex:none}
+.latecard b{font-size:15px;font-weight:500;display:block}
+.latecard p{font-size:13px;color:#555;margin-top:3px;line-height:1.4}
+.latecard .good{color:#16843a;font-weight:500}
+.latecard .msgr{color:var(--red-dark);font-size:13px;font-weight:500;margin-top:8px;display:inline-block}
+.lpanel{background:#fff;border-top:1px solid #eee;padding:10px 16px 8px;flex:none}
+.lpanel .steprow{margin-bottom:10px}
+.lpanel .cta{font-size:16px}
+.cta:disabled{background:#f3a9b6;box-shadow:none;cursor:default}
+
+/* ---------- paid after hold expired ---------- */
+.strow{display:flex;justify-content:space-between;align-items:center;font-size:13.5px;padding:7px 0;border-top:1px solid #f0f0f0;margin-top:6px}
+.strow small{display:block;font-size:11.5px;color:#888;margin-top:1px}
+.reflink{display:block;width:100%;text-align:center;color:var(--red-dark);font-size:14px;font-weight:500;padding:10px 0 2px}
+.refsteps{width:100%;text-align:left;margin-top:22px}
+.rs{display:flex;gap:12px;padding:8px 0;position:relative}
+.rs i{width:14px;height:14px;border-radius:50%;border:2px solid #ccc;flex:none;margin-top:3px;background:#fff}
+.rs.done i{background:var(--green);border-color:var(--green)}
+.rs b{font-size:14.5px;font-weight:500;display:block}.rs small{font-size:12.5px;color:#888}
+
+/* ---------- payment failed ---------- */
+.pfwrap{background:var(--bg);padding:0 14px 20px}
+.pfhead{background:#fff;text-align:center;padding:22px 18px 18px;border-radius:10px;margin-top:12px;box-shadow:0 1px 3px rgba(0,0,0,.08)}
+.pfic{width:56px;height:56px;border-radius:50%;background:#fde8ea;display:grid;place-items:center;margin:0 auto}
+.pfhead h2{font-size:19px;font-weight:500;margin-top:14px}
+.pfhead p{font-size:13.5px;color:#666;margin-top:6px;line-height:1.45}
+.attempt{display:inline-block;margin-top:10px;background:#f3f3f3;color:#666;font-size:12px;border-radius:12px;padding:4px 10px}
+.heldcard{display:flex;align-items:center;gap:12px;background:#e8f6ea;border-radius:10px;padding:14px;margin-top:10px}
+.heldcard .sbadge{background:var(--green);color:#fff;border-color:var(--green)}
+.heldcard div{flex:1}.heldcard b{font-size:15px;font-weight:500;display:block;color:#145c2b}
+.heldcard small{font-size:12.5px;color:#3f6b4b;display:block;margin-top:2px;line-height:1.35}
+.heldcard .tmr{font-size:20px;font-weight:700;color:#16843a;font-variant-numeric:tabular-nums;flex:none}
+.altpay h4{font-size:15px;font-weight:500;margin-bottom:4px}
+.altrow{display:flex;align-items:center;gap:14px;width:100%;text-align:left;padding:12px 0;border-top:1px solid #f0f0f0;font-size:15px}
+.altrow:first-of-type{border-top:0}
+.altrow .pi{width:34px;display:grid;place-items:center;flex:none}
+.altrow span{flex:1}
+.refund{font-size:12.5px;color:#888;text-align:center;margin-top:12px;line-height:1.45;padding:0 10px}
+
 /* ---------- android share sheet ---------- */
 .share{background:#f4f6fb;padding-bottom:22px}
 .shtitle{font-size:14px;color:#555;text-align:center;margin:14px 0 10px}
@@ -383,7 +428,7 @@ svg{display:block}
   <div class="homebar"><i></i></div>
   <div id="ov"></div>
 </div>
-<nav id="tabs"><button class="on" data-a="mode" data-v="org">Organizer (Rohan)</button><button data-a="mode" data-v="friend">Friend (invitee)</button></nav>
+<nav id="tabs"><button class="on" data-a="mode" data-v="org">Organizer</button><button data-a="mode" data-v="friend">Friend (invitee)</button><button data-a="mode" data-v="late">3) Shared link opened late</button><button data-a="mode" data-v="fail">4) Failure mid-transaction</button><button data-a="mode" data-v="exp">5) Payment deducted after hold expired</button></nav>
 
 <script>
 /* ================= icons ================= */
@@ -454,11 +499,37 @@ const S = {
 };
 const ME = 'Rohan';               // logged-in user (persona from the brief)
 const FRIENDS = ['Aditi','Kabir','Neha','Arjun','Ishaan','Meera','Tanvi','Dev','Sara'];
-const HOLD_MIN = 20;
+const HOLD_MIN = 15;
+const GRACE_MIN = 2;    // extra hold time after a failed payment
+const MAX_TRIES = 3;    // failed attempts allowed before the seat is released
 /* friend scenario: Rohan's group booking as the invitee sees it */
 const FG = {seats:['F9','F10','F11','F12','F13','F14'], paid:['F9','F10','F11'], link:'HTL9QG'};
 const fUnpaid = () => FG.seats.filter(s=>!FG.paid.includes(s));
 S.mode='org'; S.fk=1; S.fHoldEnd=0;
+
+/* late-link scenario: same 6-seat group (F9–F14), opened after it closed */
+S.lateK=1; S.lateSel=[];
+// hold ended: 4 friends paid, F13/F14 released to the show, F14 since bought by someone else
+const lateInfo = () => ({paid:['F9','F10','F11','F12'], gone:['F14']});
+/* seat positions on the map grid, for "closest to your friends" */
+const POS={}; (()=>{let r=0;LAYOUT.forEach(c=>c.rows.forEach(row=>{if(!row.id)return;row.cells.forEach((n,ci)=>{if(n===0)return;const id=n==='W'?row.id+(ci===13?5:4):row.id+n;POS[id]={r,c:ci,w:n==='W'};});r++;}));})();
+const lateTaken = id => {const L=lateInfo();return SOLD.has(id)||L.paid.includes(id)||L.gone.includes(id);};
+/* scenario 5: hold ended → F12–F14 released; F12 was grabbed by someone else before the payment landed */
+const EXP = {friends:['F9','F10','F11'], gone:['F12']};
+const expTaken = id => SOLD.has(id)||EXP.friends.includes(id)||EXP.gone.includes(id);
+const samePrice = id => PRICE_OF[id[0]].cat==='PREMIUM';   // so the payment already made covers it exactly
+function expSuggest(k){
+  const gp=EXP.friends.map(id=>POS[id]), r0=gp[0].r;
+  const cmin=Math.min(...gp.map(p=>p.c)), cmax=Math.max(...gp.map(p=>p.c));
+  const dist=id=>{const p=POS[id];const cd=p.c<cmin?cmin-p.c:p.c>cmax?p.c-cmax:0;return Math.abs(p.r-r0)*2.5+cd;};
+  return Object.keys(POS).filter(id=>!POS[id].w&&!expTaken(id)&&samePrice(id)).sort((a,b)=>dist(a)-dist(b)).slice(0,k);
+}
+function lateSuggest(k){
+  const L=lateInfo(), gp=L.paid.map(id=>POS[id]), r0=gp[0].r;
+  const cmin=Math.min(...gp.map(p=>p.c)), cmax=Math.max(...gp.map(p=>p.c));
+  const dist=id=>{const p=POS[id];const cd=p.c<cmin?cmin-p.c:p.c>cmax?p.c-cmax:0;return Math.abs(p.r-r0)*2.5+cd;};
+  return Object.keys(POS).filter(id=>!POS[id].w&&!lateTaken(id)).sort((a,b)=>dist(a)-dist(b)).slice(0,k);
+}
 const $app = document.getElementById('app'), $ov = document.getElementById('ov');
 const rupee = n => '₹'+n.toFixed(2);
 const rupee0 = n => '₹'+(Number.isInteger(n)?n:n.toFixed(2));
@@ -559,7 +630,7 @@ confirm(){
 payment(){
   const opts=[['upi','Pay by any UPI App',I.upi],['card','Debit/Credit Card',I.card],['wallet','Mobile Wallets',I.wallet],['gift','Gift Voucher',I.gift],['nb','Net Banking',I.monitor],['later','Pay Later',I.later],['pts','Redeem Points',I.points]];
   return `<div class="screen">
-  <div class="hdr"><button class="ibtn" data-a="go" data-v="${S.mode==='friend'?'fconfirm':'confirm'}">${I.back}</button><h1>Payment</h1></div>
+  <div class="hdr"><button class="ibtn" data-a="go" data-v="${['friend','fail','exp'].includes(S.mode)?'fconfirm':'confirm'}">${I.back}</button><h1>Payment</h1></div>
   <div class="scroll" style="background:#f2f2f2">
     <div class="amt"><span>${S.split?`Your share<small>${S.payFor} of ${S.count} seats</small>`:'Amount Payable'}</span><b>${rupee(payAmount())}</b></div>
     <div class="paysec"><h6>OTHER PAYMENT OPTIONS</h6>
@@ -626,7 +697,7 @@ fchat(){
     <div class="msg">
       <button class="lp" data-a="openInvite"><div class="lpimg">WILDWOOD</div><div class="lpt"><b>Join Rohan's Wildwood booking 🍿</b><small>Fri, 20 Nov · 11:30 PM · ${fUnpaid().length} seats left</small><small>bms.co</small></div></button>
       Pay for your seat here 👇<br><a data-a="openInvite">https://bms.co/g/${FG.link}</a><span class="tm">11:03 PM</span></div>
-    <div class="msg">seats are held for 20 mins only, pay fast 🏃<span class="tm">11:03 PM</span></div>
+    <div class="msg">seats are held for 15 mins only, pay fast 🏃<span class="tm">11:03 PM</span></div>
     <div class="msg out">on it!<span class="tm">11:04 PM ✓✓</span></div>
   </div>
   <div class="wainput"><div class="box">😊&nbsp; Message</div><div class="mic">🎤</div></div>
@@ -688,6 +759,132 @@ fconfirm(){
   <div class="foot"><div class="t"><small>Total</small><b>${rupee(total())}</b></div><button class="cta" data-a="go" data-v="payment">Continue</button></div>
   </div>`;
 },
+/* ===== LATE LINK screens ===== */
+lchat(){
+  const backW=I.back.replace('#222','#fff');
+  return `<div class="screen">
+  <div class="wahdr"><button class="ibtn" data-a="toast" data-v="Chats">${backW}</button><div class="av" style="background:#b9d7f3;color:#1d4f7a">N</div><div style="flex:1"><b>Neha</b><small>online</small></div><span class="ic">📹</span><span class="ic">📞</span><span class="ic">⋮</span></div>
+  <div class="wabody">
+    <div class="daychip">Today</div>
+    <div class="msg"><span class="fwd">↪ Forwarded</span>
+      <button class="lp" data-a="openLate"><div class="lpimg">WILDWOOD</div><div class="lpt"><b>Join Rohan's Wildwood booking 🍿</b><small>Fri, 20 Nov · 11:30 PM · Cinepolis Nexus Seawoods</small><small>bms.co</small></div></button>
+      Pay for your seat here 👇<br><a data-a="openLate">https://bms.co/g/${FG.link}</a><span class="tm">10:45 PM</span></div>
+    <div class="msg">Rohan's booking for tonight, join if you can!<span class="tm">10:45 PM</span></div>
+    <div class="msg">did you get a seat?? show's at 11:30<span class="tm">11:06 PM</span></div>
+  </div>
+  <div class="wainput"><div class="box">😊&nbsp; Message</div><div class="mic">🎤</div></div>
+  </div>`;
+},
+late(){
+  const L=lateInfo(), k=S.lateK, sel=S.lateSel;
+  const price=sel.reduce((s,id)=>s+seatCost(id),0);
+  let rows='', first=true;
+  const all=[];LAYOUT.forEach(c=>{all.push({cat:c});c.rows.forEach(r=>all.push(r));});
+  all.forEach((r,ix)=>{
+    const rlc=`rl ${first?'first':''} ${ix===all.length-1?'last':''}`; first=false;
+    if(r.cat){rows+=`<div class="srow cat"><div class="${rlc}"></div><div class="catlbl">Rs.${r.cat.price}&nbsp; ${r.cat.cat}</div></div>`;return;}
+    if(r.sp){rows+=`<div class="srow sp"><div class="${rlc}"></div></div>`;return;}
+    rows+=`<div class="srow"><div class="${rlc}">${r.id}</div><div class="cells">${r.cells.map((n,ci)=>{
+      if(n===0) return '<div class="gap"></div>';
+      const id=n==='W'?r.id+(ci===13?5:4):r.id+n;
+      const cls=L.paid.includes(id)?'sold gpaid':lateTaken(id)?'sold':sel.includes(id)?'sel':'';
+      return `<button class="st ${n==='W'?'wc':''} ${cls}" data-a="lseat" data-v="${id}" data-id="${id}">${n==='W'?I.wc:n}</button>`;
+    }).join('')}</div></div>`;
+  });
+  const clock='<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#dc3545" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>';
+  return `<div class="screen">
+  <div class="hdr"><button class="ibtn" data-a="go" data-v="lchat">${I.back}</button><div style="flex:1;min-width:0"><h1>${MOVIE.title}</h1><div class="sub">${dayLong()} | ${S.time.t} · ${S.cinema.name}</div></div></div>
+  <div class="invtop"><div class="latecard"><div class="lic">${clock}</div><div>
+    <b>Seat hold expired (11:00 PM)</b>
+    <p>${L.paid.length} friends booked; unpaid seats were released back to the show.</p>
+    <p class="good">Good news: seats near your group are still free and pre-selected.</p>  </div></div></div>
+  <div class="map" id="map"><div class="map-in">${rows}
+    <div class="screenwrap"><svg class="scr" viewBox="0 0 560 46"><path d="M40 2h480l38 34H2z" fill="#eef7fc" stroke="#cfe3f0"/><path d="M60 6h440l30 24H30z" fill="#d1ecfa"/><path d="M2 36h556v8H2z" fill="#eef7fc" stroke="#cfe3f0"/></svg><div class="scrcap">All eyes this way please!</div></div>
+  </div></div>
+  <div class="legend" style="gap:14px;font-size:13px"><span><i style="background:#cfcfcf"></i>Your friends</span><span><i style="background:#1ea83c"></i>Picked for you</span><span><i style="background:#e6e6e6"></i>Sold</span></div>
+  <div class="lpanel">
+    <div class="steprow"><div><b>Number of seats</b></div>
+      <div class="stepper"><button data-a="lk" data-v="-1" ${k<=1?'disabled':''}>−</button><span><b>${k}</b></span><button data-a="lk" data-v="1" ${k>=10?'disabled':''}>+</button></div></div>
+    <button class="cta" data-a="lBook" ${sel.length<k?'disabled':''}>${sel.length<k?`Select ${k-sel.length} more seat${k-sel.length>1?'s':''}`:`Book ${[...sel].sort(numSort).join(', ')} · ${rupee(price)}`}</button>
+  </div>
+  </div>`;
+},
+/* ===== PAYMENT AFTER HOLD EXPIRED (scenario 5) ===== */
+pexp(){
+  // story times fixed to match the other scenarios (hold ends 11:00 PM, money lands 4 s later)
+  const k=S.expK, sel=S.expSel, lost=[...S.sel].sort(numSort), endT='11:00:00 PM', paidT='11:00:04 PM';
+  const t=x=>x;
+  let rows='', first=true;
+  const all=[];LAYOUT.forEach(c=>{all.push({cat:c});c.rows.forEach(r=>all.push(r));});
+  all.forEach((r,ix)=>{
+    const rlc=`rl ${first?'first':''} ${ix===all.length-1?'last':''}`; first=false;
+    if(r.cat){rows+=`<div class="srow cat"><div class="${rlc}"></div><div class="catlbl">Rs.${r.cat.price}&nbsp; ${r.cat.cat}</div></div>`;return;}
+    if(r.sp){rows+=`<div class="srow sp"><div class="${rlc}"></div></div>`;return;}
+    rows+=`<div class="srow"><div class="${rlc}">${r.id}</div><div class="cells">${r.cells.map((n,ci)=>{
+      if(n===0) return '<div class="gap"></div>';
+      const id=n==='W'?r.id+(ci===13?5:4):r.id+n;
+      const cls=EXP.friends.includes(id)?'sold gpaid':expTaken(id)?'sold':sel.includes(id)?'sel':samePrice(id)?'':'faded';
+      return `<button class="st ${n==='W'?'wc':''} ${cls}" data-a="eseat" data-v="${id}" data-id="${id}">${n==='W'?I.wc:n}</button>`;
+    }).join('')}</div></div>`;
+  });
+  const warn='<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#b26a00" stroke-width="2"><path d="M12 3 2 20h20z"/><path d="M12 10v4M12 17v.5"/></svg>';
+  return `<div class="screen">
+  <div class="hdr"><button class="ibtn" data-a="go" data-v="fchat">${I.back}</button><div style="flex:1;min-width:0"><h1>Booking status</h1><div class="sub">${MOVIE.title} · ${dayLong()} | ${S.time.t}</div></div></div>
+  <div class="invtop"><div class="latecard"><div class="lic" style="background:#fff3d6">${warn}</div><div style="flex:1">
+    <b>Payment received after the hold expired</b>
+    <div class="strow"><span>Payment ${rupee(S.expPaid)}<small>${t(paidT)}</small></span><span class="pill done">Received</span></div>
+    <div class="strow"><span>Seat ${lost.join(', ')}<small>Hold ended ${t(endT)}</small></span><span class="pill canc">Released</span></div>
+    <p class="good">Your money is safe. Pick ${k>1?k+' seats':'a seat'} below and we'll use this payment, no need to pay again.</p>
+  </div></div></div>
+  <div class="map" id="map"><div class="map-in">${rows}
+    <div class="screenwrap"><svg class="scr" viewBox="0 0 560 46"><path d="M40 2h480l38 34H2z" fill="#eef7fc" stroke="#cfe3f0"/><path d="M60 6h440l30 24H30z" fill="#d1ecfa"/><path d="M2 36h556v8H2z" fill="#eef7fc" stroke="#cfe3f0"/></svg><div class="scrcap">All eyes this way please!</div></div>
+  </div></div>
+  <div class="legend" style="gap:14px;font-size:13px"><span><i style="background:#cfcfcf"></i>Your friends</span><span><i style="background:#1ea83c"></i>Picked for you</span><span><i style="background:#e6e6e6"></i>Sold</span></div>
+  <div class="lpanel">
+    <button class="cta" data-a="eBook" ${sel.length<k?'disabled':''}>${sel.length<k?`Select ${k-sel.length} more seat${k-sel.length>1?'s':''}`:`Use my payment for ${[...sel].sort(numSort).join(', ')}`}</button>
+    <button class="reflink" data-a="eRefundAsk">Get a full refund instead</button>
+  </div>
+  </div>`;
+},
+prefund(){
+  const d=new Date(DAYS[0].d);d.setDate(d.getDate()+5);
+  const due=d.toLocaleDateString('en-GB',{weekday:'short',day:'numeric',month:'short'});
+  return `<div class="screen"><div class="optout" style="justify-content:flex-start;padding-top:70px">
+    <div class="ic" style="background:#e8f6ea;color:#16843a">✓</div><h2>Refund initiated</h2>
+    <p>${rupee(S.expPaid)} is on its way back to your ${S.preferred||'UPI'} account.</p>
+    <div class="card refsteps">
+      <div class="rs done"><i></i><span><b>Payment received</b><small>${rupee(S.expPaid)}</small></span></div>
+      <div class="rs done"><i></i><span><b>Refund initiated</b><small>Ref ID ${S.refundId}</small></span></div>
+      <div class="rs"><i></i><span><b>Credited to your account</b><small>Expected by ${due}</small></span></div>
+    </div>
+    <button class="cta" data-a="go" data-v="fchat">Back to chat</button>
+  </div></div>`;
+},
+/* ===== PAYMENT FAILED (scenario 4) ===== */
+pfail(){
+  const seats=[...S.sel].sort(numSort), amt=payAmount(), app=S.failApp;
+  const x='<svg width="26" height="26" viewBox="0 0 24 24"><path d="M6 6l12 12M18 6 6 18" stroke="#dc3545" stroke-width="2.4" stroke-linecap="round"/></svg>';
+  return `<div class="screen" style="background:var(--bg)">
+  <div class="hdr"><button class="ibtn" data-a="go" data-v="fconfirm">${I.back}</button><h1>Payment failed</h1></div>
+  <div class="scroll"><div class="pfwrap">
+    <div class="pfhead"><div class="pfic">${x}</div>
+      <h2>Payment of ${rupee(amt)} didn't go through</h2>
+      <p>${app} couldn't complete the request; your bank didn't respond in time.</p>
+      <span class="attempt">Attempt 1 of ${MAX_TRIES} failed</span></div>
+    <div class="heldcard"><span class="sbadge">${seats[0]}</span><div>
+      <b>${seats.length>1?`Seats ${seats.join(', ')} are`:`Seat ${seats[0]} is`} still held for you</b>
+      <small>We've added ${GRACE_MIN} extra minutes so you can retry</small></div>
+      <span class="tmr" id="fholdT">--:--</span></div>
+    <div class="card altpay"><h4>Or pay another way</h4>
+      <button class="altrow" data-a="go" data-v="upi"><span class="pi">${I.upi}</span><span>Another UPI app</span>${I.right}</button>
+      <button class="altrow" data-a="go" data-v="payment"><span class="pi">${I.card}</span><span>Debit/Credit Card</span>${I.right}</button>
+      <button class="altrow" data-a="go" data-v="payment"><span class="pi">${I.monitor}</span><span>Net Banking</span>${I.right}</button>
+    </div>
+    <p class="refund">If any money was deducted, it'll be refunded to your account in 3–5 working days.</p>
+  </div></div>
+  <div class="cta-wrap" style="border-top:1px solid #eee"><button class="cta" data-a="pay">Retry with ${app} · ${rupee(amt)}</button></div>
+  </div>`;
+},
 foptout(){
   return `<div class="screen"><div class="optout">
     <div class="ic">✕</div><h2>You've opted out</h2>
@@ -731,7 +928,7 @@ ticket(){
 
 function splitCard(){
   const n=S.count, k=S.payFor, seats=seatsSorted();
-  if(n<2) return '';
+  if(n<2 || S.mode==='late') return '';
   const left=n-k;
   return `<div class="splitcard"><h5>How would you like to pay?</h5>
     <button class="radio ${!S.split?'on':''}" data-a="split" data-v="0"><i></i><div><b>Pay for all</b><small>Pay for all the ${n} seats</small></div><span>${rupee(total())}</span></button>
@@ -758,6 +955,11 @@ const overlays = {
   cancelTxn(){
     return `<div class="dim"></div><div class="dialog dlg-bms"><h4>BookMyShow</h4><p>Are you sure that you want to cancel your transaction?</p>
       <div class="row"><button data-a="closeOv">NO</button><button data-a="cancelTxnYes">YES</button></div></div>`;
+  },
+  erefund(){
+    const s=[...S.expSel].sort(numSort).join(', ');
+    return `<div class="dim"></div><div class="dialog dlg-pay"><h4>Get a full refund?</h4><p>${rupee(S.expPaid)} will go back to your ${S.preferred||'UPI'} account in 3–5 working days.${s?` ${s} won't be booked.`:''}</p>
+      <button class="yes" data-a="eRefundYes">Yes, refund</button><button class="no" data-a="closeOv">No, pick a seat</button></div>`;
   },
   fcancel(){
     return `<div class="dim"></div><div class="dialog dlg-pay"><h4>Are you sure?</h4><p>Rohan will be told you're not coming, and your seat will be opened up for others in the group.</p>
@@ -812,7 +1014,7 @@ function render(){
   if(!same) $app.firstElementChild.classList.add('enter');
   else KEEP_SCROLL.forEach((sel,i)=>{const e=$app.querySelector(sel);if(e&&saved[i]){e.scrollTop=saved[i][0];e.scrollLeft=saved[i][1];}});
   renderOv();
-  if(!same && S.screen==='finvite'){ // centre the map on the group's seats
+  if(!same && ['finvite','late','pexp'].includes(S.screen)){ // centre the map on the group's seats
     const m=document.getElementById('map'), a=m.querySelector('[data-id=F14]'), b=m.querySelector('[data-id=F9]');
     m.scrollLeft=(a.offsetLeft+b.offsetLeft+b.offsetWidth)/2-m.clientWidth/2;
     m.scrollTop=a.offsetTop-m.clientHeight/2+12;
@@ -845,10 +1047,16 @@ function updateSeats(){
     wrap.innerHTML=`<button class="cta" data-a="toConfirm">Pay ${rupee0(subtotal())}</button>`;
   } else if(wrap) wrap.remove();
 }
+function startLate(){
+  S.cinema=CINEMAS[0];S.time=S.cinema.times[0];S.day=0;
+  S.lateK=1;S.lateSel=lateSuggest(1);
+  go('lchat');
+}
 function startFriend(){
   S.cinema=CINEMAS[0];S.time=S.cinema.times[0];S.day=0;
-  S.fk=1;fSetSeats();
-  S.fHoldEnd=Date.now()+(17*60+42)*1000;   // Rohan shared the link a couple of minutes ago
+  S.fk=1;fSetSeats();S.failed=false;S.preferred=null;S.expDone=false;
+  // scenario 5 starts with the hold almost over, so the payment lands just after it ends
+  S.fHoldEnd=Date.now()+(S.mode==='exp'?75:12*60+42)*1000;   // Rohan shared the link a couple of minutes ago
   go('fchat');
 }
 /* friend gets the open seats closest to the already-paid block */
@@ -864,8 +1072,10 @@ function updateFoot(){
 }
 function fit(){
   const p=document.getElementById('phone');
-  if(innerWidth<=500){p.style.transform='';return;}
-  const s=Math.min(1,(innerHeight-40-64)/844,(innerWidth-40)/390);
+  const tb=document.getElementById('tabs').offsetHeight+24;   // tab bar may wrap to 2 rows
+  document.body.style.paddingBottom=tb+'px';
+  if(innerWidth<=500){p.style.transform='';p.style.height=`calc(100dvh - ${tb}px)`;return;}
+  const s=Math.min(1,(innerHeight-40-tb)/844,(innerWidth-40)/390);
   p.style.transform=`scale(${s})`;
 }
 window.addEventListener('resize',fit);
@@ -878,10 +1088,18 @@ function startProcessing(){
     S.progress=Math.min(100,S.progress+1.6);
     const b=document.getElementById('pbar');if(b)b.style.width=S.progress+'%';
     const pc=document.getElementById('ppct');if(pc)pc.textContent=Math.floor(S.progress)+'%';
+    // scenario 4: the first attempt fails partway through; the seat stays held + a short grace period
+    if(S.mode==='fail' && !S.failed && S.progress>=62){
+      clearInterval(procT); S.failed=true; S.failApp=S.preferred||'UPI';
+      S.fHoldEnd+=GRACE_MIN*60000; go('pfail'); return;
+    }
     if(S.progress>=100){clearInterval(procT);
       S.bookingId=Array.from({length:7},()=>'ABCDEFGHJKLMNPQRSTUVWXYZ23456789'[Math.floor(Math.random()*32)]).join('');
       S.screenNo=1+Math.floor(Math.random()*6);S.ticketOpen=true;
-      if(S.split && S.payFor<S.count) startGroup(); else {S.split=false;go('ticket');}}
+      if(S.mode==='exp' && !S.expDone){   // scenario 5: money arrives just after the hold ended
+        S.fHoldEnd=Date.now()-4000; S.expK=S.sel.length; S.expPaid=payAmount(); S.expSel=expSuggest(S.expK); go('pexp');
+      }
+      else if(S.split && S.payFor<S.count) startGroup(); else {S.split=false;go('ticket');}}
   },80);
 }
 
@@ -980,7 +1198,7 @@ const A = {
   fees:()=>{S.feesOpen=!S.feesOpen;render();},
   donate:()=>{S.donate=!S.donate;render();},
   askCancelTxn:()=>{S.ov='cancelTxn';renderOv();},
-  cancelTxnYes:()=>{S.donate=false;go('seats');},
+  cancelTxnYes:()=>{S.donate=false;go(S.mode==='late'?'late':'seats');},
   popt:v=>{if(v==='upi')go('upi');else toast('Only UPI is wired up in this prototype');},
   upiApp:v=>{S.preferred=v;startProcessing();},
   pay:()=>startProcessing(),
@@ -989,12 +1207,41 @@ const A = {
   cancelPayYes:()=>{clearInterval(procT);S.ov=null;toast('Payment cancelled');go('payment');},
   tkToggle:()=>{S.ticketOpen=!S.ticketOpen;render();},
   restart:()=>{clearInterval(holdT);clearInterval(procT);simT.forEach(clearTimeout);simT=[];S.sel=[];S.donate=false;S.count=2;S.split=false;S.payFor=1;S.group=null;S.feesOpen=false;S.ov=null;
-    if(S.mode==='friend')startFriend(); else go('showtimes');},
+    if(['friend','fail','exp'].includes(S.mode))startFriend(); else if(S.mode==='late')startLate(); else go('showtimes');},
   mode:v=>{S.mode=v;document.querySelectorAll('#tabs button').forEach(b=>b.classList.toggle('on',b.dataset.v===v));A.restart();},
+  openLate:()=>{S.lateK=1;S.lateSel=lateSuggest(1);go('late');},
+  lk:v=>{S.lateK=Math.max(1,Math.min(10,S.lateK+(+v)));S.lateSel=lateSuggest(S.lateK);render();},
+  lseat:v=>{
+    if(lateTaken(v))return;
+    const s=S.lateSel;
+    if(s.includes(v)) S.lateSel=s.filter(x=>x!==v);
+    else if(s.length<S.lateK) s.push(v);
+    else {s.shift();s.push(v);}
+    render();
+  },
+  lBook:()=>{if(S.lateSel.length<S.lateK)return;S.sel=[...S.lateSel];S.count=S.sel.length;S.split=false;S.feesOpen=false;go('confirm');},
   openInvite:()=>go('finvite'),
   fPay:()=>{S.fk=1;fSetSeats();S.feesOpen=false;go('fconfirm');},
   fk:v=>{S.fk=Math.max(1,Math.min(fUnpaid().length,S.fk+(+v)));fSetSeats();render();},
   fAskCancel:()=>{S.ov='fcancel';renderOv();},
+  eseat:v=>{
+    if(expTaken(v))return;
+    if(!samePrice(v))return toast('Pick a Premium seat, same price as your payment');
+    const s=S.expSel;
+    if(s.includes(v)) S.expSel=s.filter(x=>x!==v);
+    else if(s.length<S.expK) s.push(v);
+    else {s.shift();s.push(v);}
+    render();
+  },
+  eBook:()=>{
+    if(S.expSel.length<S.expK)return;
+    S.expDone=true; S.sel=[...S.expSel]; S.count=S.sel.length;
+    S.bookingId=Array.from({length:7},()=>'ABCDEFGHJKLMNPQRSTUVWXYZ23456789'[Math.floor(Math.random()*32)]).join('');
+    S.screenNo=1+Math.floor(Math.random()*6); S.ticketOpen=true;
+    toast('Booked with your existing payment'); go('ticket');
+  },
+  eRefundAsk:()=>{S.ov='erefund';renderOv();},
+  eRefundYes:()=>{S.refundId='BMSRF'+Math.random().toString(36).slice(2,8).toUpperCase();go('prefund');},
   fCancelYes:()=>go('foptout'),
   split:v=>{S.split=v==='1';$app.querySelector('.splitcard').outerHTML=splitCard();updateFoot();},
   payFor:v=>{
